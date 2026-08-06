@@ -1,4 +1,4 @@
-<!DOCTYPE html>　　
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -42,18 +42,19 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             overflow: hidden;
-            pointer-events: none;
+            pointer-events: none; /* クリックを邪魔しない */
         }
 
         .bg-quote {
             position: absolute;
             font-family: 'Dela Gothic One', cursive;
             white-space: nowrap;
-            opacity: 0;
+            opacity: 0; /* 最初は透明（アニメーションでフェードインさせるため） */
             text-shadow: 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
             animation: flowText linear infinite;
         }
 
+        /* 左上から右下へ20度で流れるアニメーション（フェードイン・フェードアウト付き） */
         @keyframes flowText {
             0% { transform: translate(-30vw, -30vh) rotate(20deg); opacity: 0; }
             10% { opacity: 0.15; }
@@ -61,42 +62,355 @@
             100% { transform: translate(100vw, 100vh) rotate(20deg); opacity: 0; }
         }
 
-        /* ヒーロー以下、以前のデザインをそのまま維持 */
-        .hero { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(0,0,0,0.9) 100%); position: relative; text-align: center; background-size: cover; background-position: center; }
-        .hero-content { position: relative; z-index: 2; }
-        .title { font-size: 5rem; margin: 0; text-transform: uppercase; }
-        .next-video-banner { background: rgba(42, 42, 42, 0.95); padding: 15px; text-align: center; z-index: 5; position: relative; }
-        .badge { background: #ffcc00; color: #000; font-weight: 900; padding: 5px 10px; border-radius: 5px; font-family: 'Dela Gothic One', cursive; }
-        section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; z-index: 5; position: relative; }
-        .section-title { text-align: center; font-size: 3rem; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .video-card { background: rgba(30, 30, 30, 0.9); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; pointer-events: none; }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .member-card { background: rgba(30, 30, 30, 0.9); border-radius: 15px; padding: 30px 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .tachie-container { height: 200px; margin-bottom: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: flex-end; justify-content: center; }
-        .tachie-img { max-height: 100%; max-width: 100%; object-fit: contain; }
-        footer { text-align: center; padding: 40px; background: #0a0a0a; z-index: 5; position: relative; }
+
+        /* HEADER & HERO */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(0,0,0,0.9) 100%);
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 136, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 51, 51, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(160, 32, 240, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 153, 0, 0.15) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            font-size: 5rem;
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            color: #aaaaaa;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .btn-main {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            background: #e62117;
+            border-radius: 50px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(230, 33, 23, 0.5);
+        }
+
+        /* NEXT VIDEO BANNER */
+        .next-video-banner {
+            background: rgba(42, 42, 42, 0.95);
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .badge {
+            background: #ffcc00;
+            color: #000;
+            font-weight: 900;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Dela Gothic One', cursive;
+        }
+
+        /* SECTION */
+        section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        /* RECOMMENDED VIDEOS */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .video-card {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            background: #000;
+            pointer-events: none; /* YouTubeの操作パネルを触らせない */
+        }
+
+        .video-wrapper iframe, .video-wrapper img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .video-info h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        /* MEMBERS (With Tachie) */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .members-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+            .title { font-size: 3rem; }
+            .subtitle { font-size: 1.2rem; }
+        }
+
+        .member-card {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 30px 15px;
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .member-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .member-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+        }
+
+        .daiyu::before { background: var(--daiyu-color); box-shadow: 0 0 15px var(--daiyu-color); }
+        .bongoro::before { background: var(--bongoro-color); box-shadow: 0 0 15px var(--bongoro-color); }
+        .okina::before { background: var(--okina-color); box-shadow: 0 0 15px var(--okina-color); }
+        .himejima::before { background: var(--himejima-color); box-shadow: 0 0 15px var(--himejima-color); }
+
+        .tachie-container {
+            height: 200px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .tachie-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+        }
+
+        .member-name {
+            font-size: 1.6rem;
+            margin: 10px 0;
+            white-space: nowrap;
+        }
+
+        .member-role {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #888;
+        }
+
+        .member-desc {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        /* CONTENTS & PLAYLISTS */
+        .contents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .content-item {
+            background: rgba(30, 30, 30, 0.9);
+            border-left: 5px solid #fff;
+            padding: 30px;
+            border-radius: 0 15px 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .content-item h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.8rem;
+        }
+
+        .content-item p {
+            margin: 0 0 20px 0;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .playlist-btn {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .playlist-btn:hover {
+            background: #555;
+        }
+        
+        .playlist-btn::before {
+            content: '▶';
+            font-size: 0.8em;
+        }
+
+        /* KPI / INFO */
+        .info-box {
+            background: linear-gradient(45deg, rgba(30,30,30,0.9), rgba(42,42,42,0.9));
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .target-number {
+            font-size: 4rem;
+            font-family: 'Dela Gothic One', cursive;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: #0a0a0a;
+            color: #555;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 5;
+        }
     </style>
 </head>
 <body>
 
+    <!-- 🌟 名言を流す背景コンテナ 🌟 -->
     <div id="bg-text-container"></div>
+
+    <!-- ヒーローセクション（トップ背景） -->
     <div class="hero" id="hero-section">
         <div class="hero-content">
             <h1 class="title">狂乱ファミリー</h1>
-            <a href="https://www.youtube.com/channel/UCBVxzJhahQtD7HqZOWhQYNA" target="_blank" style="padding: 15px 40px; background: #e62117; color: #fff; border-radius: 50px; font-weight: bold;">YouTube Channel</a>
+            <p class="subtitle">カオスと爆笑の4人組ゲーム実況！</p>
+            <a href="https://www.youtube.com/channel/UCBVxzJhahQtD7HqZOWhQYNA" target="_blank" class="btn-main">YouTube Channel</a>
         </div>
     </div>
 
+    <!-- 次回投稿予定バナー -->
     <div class="next-video-banner">
         <span class="badge">NEXT UPDATE</span>
-        <span id="next-video-text">読み込み中...</span>
+        <span id="next-video-text"><strong>次回投稿予定:</strong> データを取得中...</span>
     </div>
 
+    <!-- ピックアップビデオ -->
     <section id="pickup">
         <h2 class="section-title">PICK UP VIDEO</h2>
+        <p style="text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9em;">※1週間ごとにランダムに見どころ（30秒間）が切り替わります</p>
         <div class="video-grid">
             <div id="left-video-container"></div>
             <div id="right-video-container"></div>
@@ -106,66 +420,233 @@
     <section id="members">
         <h2 class="section-title">MEMBERS</h2>
         <div class="members-grid">
-            <div class="member-card"><div class="tachie-container"><img id="daiyu-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>大夫</h3></div>
-            <div class="member-card"><div class="tachie-container"><img id="bongoro-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>ぼんごろ</h3></div>
-            <div class="member-card"><div class="tachie-container"><img id="okina-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>おきな</h3></div>
-            <div class="member-card"><div class="tachie-container"><img id="himejima-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>ひめじま</h3></div>
+            
+            <div class="member-card daiyu">
+                <div class="tachie-container">
+                    <img id="daiyu-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" alt="大夫 立ち絵" class="tachie-img">
+                </div>
+                <h3 class="member-name" style="color: var(--daiyu-color);">大夫 (Daiyu)</h3>
+                <p class="member-role">司令塔 兼 魔王</p>
+                <p class="member-desc">
+                    おしゃぶりがトレードマーク。狂乱ファミリーをまとめる緑のリーダー。企画や進行を担いつつも、メンバーの引き起こすカオスな展開に最大の価値と笑いを見出している。
+                </p>
+            </div>
+
+            <div class="member-card bongoro">
+                <div class="tachie-container">
+                    <img id="bongoro-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" alt="ぼんごろ 立ち絵" class="tachie-img">
+                </div>
+                <h3 class="member-name" style="color: var(--bongoro-color);">ぼんごろ (Bongoro)</h3>
+                <p class="member-role">特攻隊長</p>
+                <p class="member-desc">
+                    赤スーツに身を包むカオスメーカー。GTAでの車爆破やフレンドリーファイアなど、予測不能な破壊的行動で強烈な撮れ高と爆笑を生み出す起爆剤。
+                </p>
+            </div>
+
+            <div class="member-card okina">
+                <div class="tachie-container">
+                    <img id="okina-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" alt="おきな 立ち絵" class="tachie-img">
+                </div>
+                <h3 class="member-name" style="color: var(--okina-color);">おきな (Okina)</h3>
+                <p class="member-role">冷静沈着なツッコミ役</p>
+                <p class="member-desc">
+                    紫の狐面が特徴。カオス極まる3人の暴走を仙人のような心で静かに見守り、的確なツッコミを入れる。グループのバランスを保つ真のまとめ役。
+                </p>
+            </div>
+
+            <div class="member-card himejima">
+                <div class="tachie-container">
+                    <img id="himejima-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" alt="ひめじま 立ち絵" class="tachie-img">
+                </div>
+                <h3 class="member-name" style="color: var(--himejima-color);">ひめじま (Himejima)</h3>
+                <p class="member-role">愛されポンコツ後輩</p>
+                <p class="member-desc">
+                    顔のお札がチャーミング。極度の方向音痴やウッカリ操作でポンコツぶりを発揮するが、ホラーゲームでの絶叫リアクションなどで先輩たちから愛されている後輩キャラ。
+                </p>
+            </div>
+
         </div>
     </section>
 
+    <section id="contents">
+        <h2 class="section-title">GAMES & SERIES</h2>
+        <div class="contents-list">
+            
+            <div class="content-item" style="border-color: #ffaa00;">
+                <h3 style="color: #ffaa00;">Kyouran GTA (GTA5)</h3>
+                <p>容赦のないフレンドリーファイアと車両爆破！強盗ミッションやカヨ・ペリコを舞台に、連携と裏切り（？）が交差する大爆笑のドタバタアクション。</p>
+                <a href="https://youtube.com/playlist?list=PLkBfq9u-z7T_wgMomQO1UGj_SjVh4bCqe" target="_blank" class="playlist-btn">GTA5 再生リストを見る</a>
+            </div>
+
+            <div class="content-item" style="border-color: #00ccff;">
+                <h3 style="color: #00ccff;">モンスターハンターワイルズ</h3>
+                <p>最新情報のおさらいから、マルチプレイでの狩猟まで。4人で力を合わせて（時には邪魔し合いながら）巨大モンスターに挑むハンティングアクション！</p>
+                <a href="https://youtube.com/playlist?list=PLkBfq9u-z7T8TCqJm1OC63dff32PWRiXA" target="_blank" class="playlist-btn">モンハン 再生リストを見る</a>
+            </div>
+
+            <div class="content-item" style="border-color: #ff4444;">
+                <h3 style="color: #ff4444;">ホラーゲーム実況</h3>
+                <p>『PRAGMATA』『隙間』『Silent Hill f』など。ひめじまの絶叫と、それに乗っかる先輩たちのリアクションが必見の恐怖（と笑い）のパニック実況。</p>
+                <a href="https://youtube.com/playlist?list=PLkBfq9u-z7T8sWL9xQ5jf0DhVNYnb_1CQ" target="_blank" class="playlist-btn">ホラー実況 再生リストを見る</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="info">
+        <div class="info-box">
+            <h2>NEXT GOAL</h2>
+            <p>チャンネル登録者数 目指せ</p>
+            <div class="target-number">100人</div>
+            <p style="color:#aaa; margin-top: 15px;">日々のショート動画とPDCAサイクルで更なる高みへ！<br>皆さまの応援よろしくお願いします！</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 狂乱ファミリー All Rights Reserved.</p>
+    </footer>
+
     <script>
+        // ==========================================
+        // 🔴🔴🔴 microCMS の情報設定 🔴🔴🔴
+        // ==========================================
         const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
-        const MICROCMS_SETTINGS_URL = 'https://kyouran-web.microcms.io/api/v1/settings';
+
+        // ↓これまでの「サイト設定」用のURL
+        const MICROCMS_SETTINGS_URL = 'https://kyouran-web.microcms.io/api/v1/settings'; 
+        
+        // ↓【新規】「名言リスト」用のURLを追加！
         const MICROCMS_QUOTES_URL = 'https://kyouran-web.microcms.io/api/v1/quotes';
+        // ==========================================
 
+        // --- 1週間に1回ランダムで動画を選ぶシステム ---
         const regularVideos = [
-            { id: "TI81zdWLeCg", start: 600, end: 630, color: "#00ccff" },
-            { id: "aR2RqvZlpSw", start: 300, end: 330, color: "#00ccff" },
-            { id: "wvk_2uYjE7Y", start: 120, end: 150, color: "#ff4444" }
-        ];
-        const shortVideos = [
-            { id: "VsWYOWC5lFI", start: 10, end: 40, color: "#a020f0" },
-            { id: "OSMe1l6s4LE", start: 60, end: 90, color: "#ff4444" }
+            { id: "TI81zdWLeCg", start: 600, end: 630, category: "モンハンワイルズ", title: "【総集編】波乱のかくれんぼ", color: "#00ccff" },
+            { id: "aR2RqvZlpSw", start: 300, end: 330, category: "モンハンワイルズ", title: "解釈を拡げろ！面白い企画を考えよう", color: "#00ccff" },
+            { id: "wvk_2uYjE7Y", start: 120, end: 150, category: "ホラー実況", title: "恐怖耐性がある人とない人の違い", color: "#ff4444" }
         ];
 
+        const shortVideos = [
+            { id: "VsWYOWC5lFI", start: 10, end: 40, category: "Shorts", title: "狂気のコスプレイヤーによるクイズ大会!!", color: "#a020f0" },
+            { id: "OSMe1l6s4LE", start: 60, end: 90, category: "Shorts風", title: "【The Renovator】ハイライト", color: "#ff4444" }
+        ];
+
+        const now = new Date();
+        const weekMs = 1000 * 60 * 60 * 24 * 7;
+        const currentWeekNumber = Math.floor(now.getTime() / weekMs);
+
+        const leftVid = regularVideos[currentWeekNumber % regularVideos.length];
+        const rightVid = shortVideos[currentWeekNumber % shortVideos.length];
+
+        // --- iframeを使用した完全ループ再生のコード ---
         function renderVideo(vid, containerId) {
+            const container = document.getElementById(containerId);
+            const videoUrl = `https://youtu.be/${vid.id}?t=${vid.start}`;
             const iframeSrc = `https://www.youtube.com/embed/${vid.id}?start=${vid.start}&end=${vid.end}&autoplay=1&mute=1&loop=1&playlist=${vid.id}&controls=0&disablekb=1&fs=0&rel=0`;
-            document.getElementById(containerId).innerHTML = `<div class="video-card"><div class="video-wrapper"><iframe src="${iframeSrc}"></iframe></div></div>`;
+
+            container.innerHTML = `
+                <div class="video-card">
+                    <div class="video-wrapper">
+                        <iframe src="${iframeSrc}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <span style="color: ${vid.color}; font-weight:bold; font-size: 0.8rem;">${vid.category}</span>
+                        <h4>${vid.title}</h4>
+                        <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">※ハイライト（30秒間）を自動再生中</p>
+                        <a href="${videoUrl}" target="_blank" style="display: inline-block; margin-top: 10px; color: #fff; background: #e62117; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">▶ 音声ありで本編を見る</a>
+                    </div>
+                </div>
+            `;
         }
 
+        // --- 背景名言アニメーション生成 ---
         function createBackgroundQuotes(quotes) {
+            if (!quotes || quotes.length === 0) return;
             const container = document.getElementById('bg-text-container');
-            const colorMap = { '大夫': 'var(--daiyu-color)', 'ぼんごろ': 'var(--bongoro-color)', 'おきな': 'var(--okina-color)', 'ひめじま': 'var(--himejima-color)', 'その他': '#ffffff' };
-            for (let i = 0; i < 30; i++) {
-                const q = quotes[Math.floor(Math.random() * quotes.length)];
+            const numQuotes = 30; // 画面を埋め尽くすように30個ほど生成
+
+            // microCMSのセレクトボックスの選択肢とCSSカラーの紐付け
+            const colorMap = {
+                '大夫': 'var(--daiyu-color)',
+                'ぼんごろ': 'var(--bongoro-color)',
+                'おきな': 'var(--okina-color)',
+                'ひめじま': 'var(--himejima-color)',
+                'その他': '#ffffff'
+            };
+
+            for (let i = 0; i < numQuotes; i++) {
+                const q = quotes[Math.floor(Math.random() * quotes.length)]; // ランダムに名言を選択
                 const el = document.createElement('div');
                 el.className = 'bg-quote';
                 el.innerText = q.text;
-                el.style.color = colorMap[q.color] || '#ffffff';
-                el.style.top = (Math.random() * 120 - 10) + 'vh';
-                el.style.left = (Math.random() * 120 - 10) + 'vw';
-                el.style.animationDuration = (Math.random() * 30 + 40) + 's';
+
+                // カラーの設定
+                let selectedColor = 'その他';
+                if (q.color) {
+                    selectedColor = Array.isArray(q.color) ? q.color[0] : q.color;
+                }
+                el.style.color = colorMap[selectedColor] || '#ffffff';
+
+                // サイズ、初期位置、アニメーション時間をランダム化
+                const fontSize = Math.random() * 2 + 1.5; // 1.5rem 〜 3.5rem
+                el.style.fontSize = fontSize + 'rem';
+
+                el.style.top = (Math.random() * 120 - 10) + 'vh';  // 上下広範囲からスタート
+                el.style.left = (Math.random() * 120 - 10) + 'vw'; // 左右広範囲からスタート
+
+                const duration = Math.random() * 30 + 40; // 40秒〜70秒でゆっくり流れる
+                const delay = Math.random() * -60; // 画面を開いた瞬間にすでに散らばっているようにする
+                
+                el.style.animationDuration = duration + 's';
+                el.style.animationDelay = delay + 's';
+
                 container.appendChild(el);
             }
         }
 
+
+        // --- microCMSからデータを取得して反映するシステム ---
         window.onload = async function() {
-            const now = new Date();
-            const week = Math.floor(now.getTime() / (1000 * 60 * 60 * 24 * 7));
-            renderVideo(regularVideos[week % regularVideos.length], 'left-video-container');
-            renderVideo(shortVideos[week % shortVideos.length], 'right-video-container');
+            renderVideo(leftVid, 'left-video-container');
+            renderVideo(rightVid, 'right-video-container');
 
-            fetch(MICROCMS_SETTINGS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
-                .then(r => r.json()).then(d => {
-                    if (d.next_video) document.getElementById('next-video-text').innerHTML = d.next_video;
-                    if (d.daiyu_img) document.getElementById('daiyu-img').src = d.daiyu_img.url;
-                    if (d.bongoro_img) document.getElementById('bongoro-img').src = d.bongoro_img.url;
-                    if (d.okina_img) document.getElementById('okina-img').src = d.okina_img.url;
-                    if (d.himejima_img) document.getElementById('himejima-img').src = d.himejima_img.url;
+            if (MICROCMS_SETTINGS_URL.includes('ここに')) return;
+
+            // 1. 設定情報の取得（テキスト・画像）
+            try {
+                const response = await fetch(MICROCMS_SETTINGS_URL, {
+                    headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY }
                 });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.next_video) document.getElementById('next-video-text').innerHTML = `<strong>次回投稿予定:</strong> ${data.next_video}`;
+                    if (data.hero_bg && data.hero_bg.url) document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${data.hero_bg.url})`;
+                    if (data.daiyu_img && data.daiyu_img.url) document.getElementById('daiyu-img').src = data.daiyu_img.url;
+                    if (data.bongoro_img && data.bongoro_img.url) document.getElementById('bongoro-img').src = data.bongoro_img.url;
+                    if (data.okina_img && data.okina_img.url) document.getElementById('okina-img').src = data.okina_img.url;
+                    if (data.himejima_img && data.himejima_img.url) document.getElementById('himejima-img').src = data.himejima_img.url;
+                }
+            } catch (error) {
+                console.error('設定データの取得に失敗:', error);
+            }
 
-            fetch(MICROCMS_QUOTES_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
-                .then(r => r.json()).then(d => createBackgroundQuotes(d.contents));
+            // 2. 名言リストの取得と背景生成
+            if (!MICROCMS_QUOTES_URL.includes('ここに')) {
+                try {
+                    const resQuotes = await fetch(MICROCMS_QUOTES_URL, {
+                        headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY }
+                    });
+                    if (resQuotes.ok) {
+                        const quotesData = await resQuotes.json();
+                        // contentsの中にリストのデータが入っている
+                        if (quotesData.contents && quotesData.contents.length > 0) {
+                            createBackgroundQuotes(quotesData.contents);
+                        }
+                    }
+                } catch (error) {
+                    console.error('名言リストの取得に失敗:', error);
+                }
+            }
         }
     </script>
 </body>
