@@ -1,0 +1,172 @@
+<!DOCTYPE html>　　
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>狂乱ファミリー 公式ホームページ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #f0f0f0;
+            --daiyu-color: #00ff88;
+            --bongoro-color: #ff3333;
+            --okina-color: #a020f0;
+            --himejima-color: #ff9900;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Dela Gothic One', cursive;
+            letter-spacing: 2px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* 背景の名言アニメーション用コンテナ */
+        #bg-text-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-quote {
+            position: absolute;
+            font-family: 'Dela Gothic One', cursive;
+            white-space: nowrap;
+            opacity: 0;
+            text-shadow: 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
+            animation: flowText linear infinite;
+        }
+
+        @keyframes flowText {
+            0% { transform: translate(-30vw, -30vh) rotate(20deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translate(100vw, 100vh) rotate(20deg); opacity: 0; }
+        }
+
+        /* ヒーロー以下、以前のデザインをそのまま維持 */
+        .hero { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(0,0,0,0.9) 100%); position: relative; text-align: center; background-size: cover; background-position: center; }
+        .hero-content { position: relative; z-index: 2; }
+        .title { font-size: 5rem; margin: 0; text-transform: uppercase; }
+        .next-video-banner { background: rgba(42, 42, 42, 0.95); padding: 15px; text-align: center; z-index: 5; position: relative; }
+        .badge { background: #ffcc00; color: #000; font-weight: 900; padding: 5px 10px; border-radius: 5px; font-family: 'Dela Gothic One', cursive; }
+        section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; z-index: 5; position: relative; }
+        .section-title { text-align: center; font-size: 3rem; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .video-card { background: rgba(30, 30, 30, 0.9); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; pointer-events: none; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .member-card { background: rgba(30, 30, 30, 0.9); border-radius: 15px; padding: 30px 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .tachie-container { height: 200px; margin-bottom: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: flex-end; justify-content: center; }
+        .tachie-img { max-height: 100%; max-width: 100%; object-fit: contain; }
+        footer { text-align: center; padding: 40px; background: #0a0a0a; z-index: 5; position: relative; }
+    </style>
+</head>
+<body>
+
+    <div id="bg-text-container"></div>
+    <div class="hero" id="hero-section">
+        <div class="hero-content">
+            <h1 class="title">狂乱ファミリー</h1>
+            <a href="https://www.youtube.com/channel/UCBVxzJhahQtD7HqZOWhQYNA" target="_blank" style="padding: 15px 40px; background: #e62117; color: #fff; border-radius: 50px; font-weight: bold;">YouTube Channel</a>
+        </div>
+    </div>
+
+    <div class="next-video-banner">
+        <span class="badge">NEXT UPDATE</span>
+        <span id="next-video-text">読み込み中...</span>
+    </div>
+
+    <section id="pickup">
+        <h2 class="section-title">PICK UP VIDEO</h2>
+        <div class="video-grid">
+            <div id="left-video-container"></div>
+            <div id="right-video-container"></div>
+        </div>
+    </section>
+
+    <section id="members">
+        <h2 class="section-title">MEMBERS</h2>
+        <div class="members-grid">
+            <div class="member-card"><div class="tachie-container"><img id="daiyu-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>大夫</h3></div>
+            <div class="member-card"><div class="tachie-container"><img id="bongoro-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>ぼんごろ</h3></div>
+            <div class="member-card"><div class="tachie-container"><img id="okina-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>おきな</h3></div>
+            <div class="member-card"><div class="tachie-container"><img id="himejima-img" src="https://placehold.co/300x400/2a2a2a/555" class="tachie-img"></div><h3>ひめじま</h3></div>
+        </div>
+    </section>
+
+    <script>
+        const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
+        const MICROCMS_SETTINGS_URL = 'https://kyouran-web.microcms.io/api/v1/settings';
+        const MICROCMS_QUOTES_URL = 'https://kyouran-web.microcms.io/api/v1/quotes';
+
+        const regularVideos = [
+            { id: "TI81zdWLeCg", start: 600, end: 630, color: "#00ccff" },
+            { id: "aR2RqvZlpSw", start: 300, end: 330, color: "#00ccff" },
+            { id: "wvk_2uYjE7Y", start: 120, end: 150, color: "#ff4444" }
+        ];
+        const shortVideos = [
+            { id: "VsWYOWC5lFI", start: 10, end: 40, color: "#a020f0" },
+            { id: "OSMe1l6s4LE", start: 60, end: 90, color: "#ff4444" }
+        ];
+
+        function renderVideo(vid, containerId) {
+            const iframeSrc = `https://www.youtube.com/embed/${vid.id}?start=${vid.start}&end=${vid.end}&autoplay=1&mute=1&loop=1&playlist=${vid.id}&controls=0&disablekb=1&fs=0&rel=0`;
+            document.getElementById(containerId).innerHTML = `<div class="video-card"><div class="video-wrapper"><iframe src="${iframeSrc}"></iframe></div></div>`;
+        }
+
+        function createBackgroundQuotes(quotes) {
+            const container = document.getElementById('bg-text-container');
+            const colorMap = { '大夫': 'var(--daiyu-color)', 'ぼんごろ': 'var(--bongoro-color)', 'おきな': 'var(--okina-color)', 'ひめじま': 'var(--himejima-color)', 'その他': '#ffffff' };
+            for (let i = 0; i < 30; i++) {
+                const q = quotes[Math.floor(Math.random() * quotes.length)];
+                const el = document.createElement('div');
+                el.className = 'bg-quote';
+                el.innerText = q.text;
+                el.style.color = colorMap[q.color] || '#ffffff';
+                el.style.top = (Math.random() * 120 - 10) + 'vh';
+                el.style.left = (Math.random() * 120 - 10) + 'vw';
+                el.style.animationDuration = (Math.random() * 30 + 40) + 's';
+                container.appendChild(el);
+            }
+        }
+
+        window.onload = async function() {
+            const now = new Date();
+            const week = Math.floor(now.getTime() / (1000 * 60 * 60 * 24 * 7));
+            renderVideo(regularVideos[week % regularVideos.length], 'left-video-container');
+            renderVideo(shortVideos[week % shortVideos.length], 'right-video-container');
+
+            fetch(MICROCMS_SETTINGS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
+                .then(r => r.json()).then(d => {
+                    if (d.next_video) document.getElementById('next-video-text').innerHTML = d.next_video;
+                    if (d.daiyu_img) document.getElementById('daiyu-img').src = d.daiyu_img.url;
+                    if (d.bongoro_img) document.getElementById('bongoro-img').src = d.bongoro_img.url;
+                    if (d.okina_img) document.getElementById('okina-img').src = d.okina_img.url;
+                    if (d.himejima_img) document.getElementById('himejima-img').src = d.himejima_img.url;
+                });
+
+            fetch(MICROCMS_QUOTES_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
+                .then(r => r.json()).then(d => createBackgroundQuotes(d.contents));
+        }
+    </script>
+</body>
+</html>
