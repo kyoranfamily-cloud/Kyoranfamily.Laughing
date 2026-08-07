@@ -255,7 +255,6 @@
                                 const imgEl = document.getElementById(idLower + '-img');
                                 if (imgEl && member.image) imgEl.src = member.image.url;
                                 
-                                // 肩書き（role）の動的反映を追加
                                 const roleEl = document.getElementById(idLower + '-role');
                                 if (roleEl && member.role) roleEl.innerText = member.role;
 
@@ -324,7 +323,7 @@
                         const jstOffset = 9 * 60 * 60 * 1000; 
                         const dayNumber = Math.floor((now.getTime() + jstOffset) / (1000 * 60 * 60 * 24));
                         
-                        if, (shortVideos.length > 0) {
+                        if (shortVideos.length > 0) {
                             renderVideo(shortVideos[(dayNumber + 3) % shortVideos.length], 'right-video-container', 'short');
                         }
                         if (regularVideos.length > 0) {
