@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おきな (Okina) - 狂乱ファミリー</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #121212; --text-color: #f0f0f0; --theme-color: #a020f0; }
+        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Noto Sans JP', sans-serif; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Dela Gothic One', cursive; letter-spacing: 2px; }
+        a { text-decoration: none; }
+        .bg-giant-text { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 15vw; color: var(--theme-color); opacity: 0.05; white-space: nowrap; z-index: -2; font-family: 'Dela Gothic One', cursive; pointer-events: none; }
+        header { padding: 20px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--theme-color); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(5px); display: flex; justify-content: space-between; align-items: center;}
+        .back-btn { color: #fff; font-weight: bold; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
+        .back-btn:hover { background: #333; }
+        
+        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, rgba(160, 32, 240, 0.15) 0%, transparent 70%); }
+        .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px rgba(160,32,240,0.4); }
+        .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 20px; font-weight: bold; }
+        
+        .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 520px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
+        .avatar-img { height: 95%; max-width: 26%; object-fit: contain; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.9)); opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; transition: transform 0.3s; }
+        .avatar-img:hover { transform: translateY(-10px); }
+        
+        .avatar-other { animation-delay: 0.2s; }
+        .avatar-mh { animation-delay: 0.4s; }
+        .avatar-gta { animation-delay: 0.6s; }
+        .avatar-tachie { animation-delay: 0.8s; }
+        
+        @keyframes fadeInUp { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+        .content-container { max-width: 900px; margin: 0 auto 40px; padding: 20px; display: grid; gap: 30px; }
+        
+        .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 20; margin-top: -60px; }
+        @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; margin-top: -20px; } .avatar-cluster { height: 350px; } }
+        
+        .motto-box { background: rgba(20, 15, 26, 0.95); border: 2px solid rgba(160,32,240,0.5); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .madness-box { background: rgba(20, 20, 20, 0.95); border: 2px solid rgba(255,255,255,0.3); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        
+        .quote-title { font-family: 'Dela Gothic One', cursive; font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
+        .quote-text { font-size: 1.4rem; font-weight: bold; line-height: 1.5; }
+
+        .profile-box { background: rgba(30, 30, 30, 0.9); padding: 30px; border-radius: 15px; border-left: 5px solid var(--theme-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .profile-box h2 { margin-top: 0; color: var(--theme-color); border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .profile-text { line-height: 1.8; font-size: 1.05rem; }
+        .profile-text p { margin-top: 0; margin-bottom: 15px; }
+        .profile-text p:last-child { margin-bottom: 0; }
+
+        .video-card { background: rgba(20, 20, 20, 0.9); border-radius: 15px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #333; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; pointer-events: none; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .video-info { padding: 20px; }
+        .video-info h4 { margin: 0 0 10px 0; font-size: 1.2rem; }
+        footer { text-align: center; padding: 40px; background: #0a0a0a; color: #555; font-size: 0.9rem; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div class="bg-giant-text">冷静沈着なツッコミ役</div>
+    <header>
+        <a href="index.html" class="back-btn">← トップページ</a>
+        <div style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">OKINA PROFILE</div>
+    </header>
+    <div class="member-hero">
+        <h1 class="member-name">おきな</h1>
+        <div id="member-role" class="member-role">冷静沈着なツッコミ役 兼 真のまとめ役</div>
+        <div class="avatar-cluster">
+            <img id="image-other" src="https://placehold.co/300x500/222/555?text=Other" alt="その他" class="avatar-img avatar-other">
+            <img id="image-mh" src="https://placehold.co/400x600/333/777?text=Monster+Hunter" alt="モンハン姿" class="avatar-img avatar-mh">
+            <img id="image-gta" src="https://placehold.co/350x550/444/888?text=GTA5" alt="GTA姿" class="avatar-img avatar-gta">
+            <img id="tachie-img" src="https://placehold.co/500x700/111/a020f0?text=Tachie+(Fox+Mask)" alt="立ち絵" class="avatar-img avatar-tachie">
+        </div>
+    </div>
+    <div class="content-container">
+        <div class="quote-grid">
+            <div class="motto-box">
+                <div class="quote-title">📝 座右の銘</div>
+                <div id="motto-quote" class="quote-text" style="color: var(--theme-color);">「仙人の心で、<br>カオスを制す」</div>
+            </div>
+            <div class="madness-box">
+                <div class="quote-title">⚠️ 狂気の一言</div>
+                <div id="madness-quote" class="quote-text" style="color: #fff;">「……またやってるよ。<br>（※どこか楽しげ）」</div>
+            </div>
+        </div>
+        <div class="profile-box">
+            <h2>ABOUT OKINA</h2>
+            <div id="about-text" class="profile-text">
+                <p>紫の<strong>狐面</strong>が特徴。カオス極まる3人の暴走を仙人のような心で静かに見守り、的確なツッコミを入れる。</p>
+                <p>グループのバランスを保つ真のまとめ役であり、高い観察眼で状況を俯瞰する。彼がいるからこそ、狂乱ファミリーは崩壊せずにギリギリのエンターテインメントを保つことができている。</p>
+            </div>
+        </div>
+        <div class="profile-box">
+            <h2>RECOMMEND VIDEO</h2>
+            <p style="color: #aaa; font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">おきなの的確なツッコミが光るおすすめ動画をピックアップ！</p>
+            <div id="member-video-container"></div>
+        </div>
+    </div>
+    <footer><p>&copy; 2026 狂乱ファミリー All Rights Reserved.</p></footer>
+
+    <script>
+        const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
+        const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos';
+        const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members';
+
+        function extractYouTubeId(url) {
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtube\.com\/shorts\/)([^"&?\/\s]{11})/);
+            return match ? match[1] : null;
+        }
+
+        function renderMemberVideo(vid, containerId) {
+            if (!vid) return; 
+            const startSec = Math.floor(Math.random() * 120) + 60; 
+            const iframeSrc = `https://www.youtube.com/embed/${vid.id}?autoplay=1&mute=1&start=${startSec}&controls=0&disablekb=1&fs=0&rel=0`;
+            const videoUrl = `https://youtu.be/${vid.id}`;
+            document.getElementById(containerId).innerHTML = `
+                <div class="video-card">
+                    <div class="video-wrapper">
+                        <iframe src="${iframeSrc}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <span style="color: ${vid.color}; font-weight:bold; font-size: 0.9rem;">${vid.category}</span>
+                        <h4>${vid.title}</h4>
+                        <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">※約30秒ごとに別のおすすめシーンへ自動切り替え中</p>
+                        <a href="${videoUrl}" target="_blank" style="display: inline-block; margin-top: 10px; color: #fff; background: #e62117; padding: 8px 15px; border-radius: 5px; font-size: 0.9rem; font-weight: bold;">▶ 音声ありで本編を見る</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = function() {
+            fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.contents) {
+                        const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === 'okina');
+                        if (member) {
+                            if (member.image) document.getElementById('tachie-img').src = member.image.url;
+                            if (member.image_gta) document.getElementById('image-gta').src = member.image_gta.url;
+                            if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
+                            if (member.image_other) document.getElementById('image-other').src = member.image_other.url;
+
+                            if (member.role) document.getElementById('member-role').innerText = member.role;
+                            if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
+                            if (member.madness) document.getElementById('madness-quote').innerHTML = member.madness.replace(/\n/g, '<br>');
+                            if (member.about) document.getElementById('about-text').innerHTML = member.about;
+                        }
+                    }
+                }).catch(e => console.error('メンバー情報取得エラー:', e));
+
+            fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
+                .then(r => r.json())
+                .then(data => {
+                    const allVideos = data.contents;
+                    const memberVideos = [];
+                    allVideos.forEach(v => {
+                        const videoId = extractYouTubeId(v.url); 
+                        if (!videoId) return;
+                        const selectedColorName = Array.isArray(v.color) ? v.color[0] : v.color;
+                        if (selectedColorName === 'おきな（紫）' || v.title.includes('おきな')) {
+                            memberVideos.push({ id: videoId, title: v.title, category: v.category, color: 'var(--theme-color)' });
+                        }
+                    });
+                    if (memberVideos.length > 0) {
+                        const now = new Date();
+                        const dayNumber = Math.floor((now.getTime() + 9 * 60 * 60 * 1000) / (1000 * 60 * 60 * 24));
+                        let currentIndex = dayNumber % memberVideos.length;
+                        renderMemberVideo(memberVideos[currentIndex], 'member-video-container');
+                        setInterval(() => {
+                            currentIndex = (currentIndex + 1) % memberVideos.length;
+                            renderMemberVideo(memberVideos[currentIndex], 'member-video-container');
+                        }, 30000);
+                    } else {
+                        document.getElementById('member-video-container').innerHTML = '<p style="color:#aaa;">おすすめ動画のデータがまだありません。</p>';
+                    }
+                }).catch(e => console.error(e));
+        };
+    </script>
+</body>
+</html>
