@@ -19,13 +19,18 @@
         .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px rgba(255,51,51,0.4); }
         .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 30px; font-weight: bold; }
         
-        .avatar-cluster { position: relative; width: 100%; max-width: 900px; height: 450px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; }
-        .avatar-img { position: absolute; bottom: 0; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8)); opacity: 0; }
+        /* 複数画像が重ならず綺麗に見えるように再配置したアバタークラスタ */
+        .avatar-cluster { position: relative; width: 100%; max-width: 1000px; height: 480px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; }
+        .avatar-img { position: absolute; bottom: 0; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8)); opacity: 0; transition: transform 0.3s; }
         
-        .avatar-tachie { z-index: 10; height: 100%; left: 50%; transform: translateX(-50%); animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s; }
-        .avatar-gta { z-index: 5; height: 85%; left: 10%; animation: slideRightFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.5s; }
-        .avatar-mh { z-index: 6; height: 75%; right: 15%; bottom: 5%; animation: slideLeftFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.7s; }
-        .avatar-other { z-index: 3; height: 60%; left: 35%; bottom: 25%; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.9)) brightness(0.7); animation: slideDownFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.9s; }
+        /* 中央メイン立ち絵 */
+        .avatar-tachie { z-index: 10; height: 95%; left: 50%; transform: translateX(-50%); animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s; }
+        /* 左側に配置するGTA姿 */
+        .avatar-gta { z-index: 7; height: 75%; left: 15%; bottom: 10%; animation: slideRightFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.4s; }
+        /* 右側に配置するモンハン姿 */
+        .avatar-mh { z-index: 8; height: 70%; right: 15%; bottom: 10%; animation: slideLeftFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.6s; }
+        /* 一番後ろに隠れていた「その他」画像を、少しサイズと位置を調整して手前にしっかり見えるように配置 */
+        .avatar-other { z-index: 5; height: 55%; left: 32%; bottom: 15%; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.9)) brightness(0.85); animation: slideDownFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.8s; }
         
         @keyframes slideUpFade { 0% { transform: translate(-50%, 50px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         @keyframes slideRightFade { 0% { transform: translateX(-50px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
@@ -63,10 +68,11 @@
         <h1 class="member-name">ぼんごろ</h1>
         <div id="member-role" class="member-role">特攻隊長</div>
         <div class="avatar-cluster">
-            <img src="https://placehold.co/300x500/222/555?text=Other" alt="その他" class="avatar-img avatar-other">
-            <img src="https://placehold.co/400x600/333/777?text=Monster+Hunter" alt="モンハン姿" class="avatar-img avatar-mh">
-            <img src="https://placehold.co/350x550/444/888?text=GTA5+(Shotgun)" alt="GTA姿(ショットガン)" class="avatar-img avatar-gta">
-            <img id="tachie-img" src="https://placehold.co/500x700/111/ff3333?text=Tachie+(Red+Suit)" alt="立ち絵(赤スーツ)" class="avatar-img avatar-tachie">
+            <!-- 追加・調整した4つの画像枠（CMSから動的取得） -->
+            <img id="image-other" src="https://placehold.co/300x500/222/555?text=Other" alt="その他" class="avatar-img avatar-other">
+            <img id="image-mh" src="https://placehold.co/400x600/333/777?text=Monster+Hunter" alt="モンハン姿" class="avatar-img avatar-mh">
+            <img id="image-gta" src="https://placehold.co/350x550/444/888?text=GTA5+(Shotgun)" alt="GTA姿" class="avatar-img avatar-gta">
+            <img id="tachie-img" src="https://placehold.co/500x700/111/ff3333?text=Tachie+(Red+Suit)" alt="立ち絵" class="avatar-img avatar-tachie">
         </div>
     </div>
     <div class="content-container">
@@ -132,10 +138,18 @@
                     if (data.contents) {
                         const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === 'bongoro');
                         if (member) {
+                            // メイン立ち絵
                             if (member.image) document.getElementById('tachie-img').src = member.image.url;
+                            
+                            // 追加した3つの画像フィールドの動的紐付け
+                            // ※microCMS側のフィールドIDをそれぞれ image_gta, image_mh, image_other とした場合
+                            if (member.image_gta) document.getElementById('image-gta').src = member.image_gta.url;
+                            if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
+                            if (member.image_other) document.getElementById('image-other').src = member.image_other.url;
+
                             if (member.role) document.getElementById('member-role').innerText = member.role;
                             if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
-                            if (member.description) document.getElementById('madness-quote').innerHTML = member.description.replace(/\n/g, '<br>');
+                            if (member.madness) document.getElementById('madness-quote').innerHTML = member.madness.replace(/\n/g, '<br>');
                             if (member.about) document.getElementById('about-text').innerHTML = member.about;
                         }
                     }
