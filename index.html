@@ -31,6 +31,9 @@
         .sns-btn:hover { transform: translateY(-3px); }
         .sns-x { background: #000; }
         .sns-tiktok { background: #010101; border-color: #69C9D0; }
+        /* TikTok準備中（COMING SOON）用のスタイル */
+        .sns-tiktok.disabled { background: #222; border-color: #444; color: #777; cursor: not-allowed; pointer-events: none; position: relative; }
+        .sns-tiktok.disabled::after { content: ' (COMING SOON)'; font-size: 0.75rem; color: #ffcc00; }
         
         section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 5; }
         .section-title { text-align: center; font-size: 3rem; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 10px; }
@@ -40,7 +43,7 @@
         .about-box p { font-size: 1.1rem; line-height: 1.8; color: #ddd; max-width: 800px; margin: 0 auto; }
 
         .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px; align-items: stretch; }
-        .video-card { background: rgba(30, 30, 30, 0.9); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; transition: transform 0.3s; backdrop-filter: blur(5px); width: 100%; }
+        .video-card { background: rgba(30, 30, 30, 0.9); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; transition: transform 0.3s; backdrop-filter: blur(5px); width: 100%; height: 100%; }
         .video-card:hover { transform: translateY(-5px); }
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; pointer-events: none; }
         .video-wrapper iframe, .video-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -86,8 +89,9 @@
             <p class="subtitle">カオスと爆笑の4人組ゲーム実況！</p>
             <a href="https://www.youtube.com/channel/UCBVxzJhahQtD7HqZOWhQYNA" target="_blank" class="btn-main">YouTube Channel</a>
             <div class="sns-container">
-                <a href="#" target="_blank" class="sns-btn sns-x">𝕏 Twitter</a>
-                <a href="#" target="_blank" class="sns-btn sns-tiktok">TikTok</a>
+                <a id="sns-twitter" href="#" target="_blank" class="sns-btn sns-x">𝕏 Twitter</a>
+                <!-- TikTokは現在準備中のため disabled クラスを付与。準備ができたらクラスを外してリンクを設定可能 -->
+                <a id="sns-tiktok" href="#" target="_blank" class="sns-btn sns-tiktok disabled">TikTok</a>
             </div>
         </div>
     </div>
@@ -124,7 +128,7 @@
             </div>
             <div class="member-card bongoro">
                 <div class="tachie-container"><img id="bongoro-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" class="tachie-img"></div>
-                <h3 class="member-name" style="color: var(--bongoro-color);">ぼんごろ (Bongoro)</h3>
+                <h3 class="member-name" style="color: var(--bongoro-color);">ぼんごろう (Bongoro)</h3>
                 <p class="member-role" id="bongoro-role">特攻隊長</p>
                 <p class="member-desc" id="bongoro-desc">赤スーツの起爆剤。ショットガンでのフレンドリーファイアや車爆破など、予測不能な破壊的行動で強烈な撮れ高と爆笑を生み出す。</p>
                 <a href="member_bongoro.html" class="member-btn">詳細プロフィール</a>
@@ -206,7 +210,7 @@
             }
             const videoUrl = `https://youtu.be/${vid.id}`;
             document.getElementById(containerId).innerHTML = `
-                <div class="video-card" style="height: 100%;">
+                <div class="video-card">
                     <div class="video-wrapper">
                         <iframe src="${iframeSrc}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     </div>
@@ -244,7 +248,7 @@
         window.onload = async function() {
             const fetchOptions = { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } };
             
-            // メンバーAPIからのデータ取得と反映（画像・肩書き・説明文）
+            // メンバーAPIからのデータ取得と反映
             if (MICROCMS_MEMBERS_URL) {
                 fetch(MICROCMS_MEMBERS_URL, fetchOptions)
                     .then(r => r.json())
@@ -265,19 +269,37 @@
                     }).catch(e => console.error('メンバー取得エラー:', e));
             }
 
-            // 設定情報の取得（次回予告含む）
+            // 設定情報の取得（次回予告・SNSリンク含む）
             if (MICROCMS_SETTINGS_URL) {
                 fetch(MICROCMS_SETTINGS_URL, fetchOptions)
                     .then(r => r.json()).then(d => {
-                        if (d.hero_bg && d.hero_bg.url) document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${d.hero_bg.url})`;
+                        if (d.hero_bg && d.hero_bg.url) {
+                            document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${d.hero_bg.url})`;
+                        }
+                        
+                        // Twitterリンクの動的設定
+                        if (d.twitter_url) {
+                            const twBtn = document.getElementById('sns-twitter');
+                            if (twBtn) twBtn.href = d.twitter_url;
+                        }
+
+                        // TikTokリンクの動的設定（CMS側に入力があれば自動で有効化する仕様）
+                        if (d.tiktok_url) {
+                            const ttBtn = document.getElementById('sns-tiktok');
+                            if (ttBtn) {
+                                ttBtn.href = d.tiktok_url;
+                                ttBtn.classList.remove('disabled');
+                            }
+                        }
                         
                         const nextVideoContainer = document.getElementById('next-video-container');
                         if (d.next_video_title && d.next_video_thumb && d.next_video_thumb.url) {
+                            // 横の動画カードと完全同サイズ（video-card）になるように構造を統一
                             nextVideoContainer.innerHTML = `
-                                <div class="video-card" style="height: 100%;">
+                                <div class="video-card">
                                     <div class="video-wrapper">
                                         <img src="${d.next_video_thumb.url}" alt="次回サムネイル">
-                                        <div style="position:absolute; top:10px; left:10px; background:#ffcc00; color:#000; font-weight:bold; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-family: 'Dela Gothic One', cursive;">NEXT UPDATE</div>
+                                        <div style="position:absolute; top:10px; left:10px; background:#ffcc00; color:#000; font-weight:bold; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-family: 'Dela Gothic One', cursive; z-index:2;">NEXT UPDATE</div>
                                     </div>
                                     <div class="video-info">
                                         <span style="color: #ffcc00; font-weight:bold; font-size: 0.9rem;">次回投稿予定</span>
@@ -288,7 +310,7 @@
                             `;
                         } else {
                             nextVideoContainer.innerHTML = `
-                                <div class="video-card coming-soon-card" style="height: 100%;">
+                                <div class="video-card coming-soon-card">
                                     <h3 style="color: #ffcc00; font-size: 2rem; margin: 0 0 15px 0;">COMING SOON</h3>
                                     <p style="color: #ccc; font-size: 1rem; line-height: 1.6; font-weight:bold;">現在、次回のカオスを<br>絶賛仕込み中！</p>
                                     <p style="color: #888; font-size: 0.85rem; margin-top: 20px;">左の動画でお茶を濁してください🍵</p>
