@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg-color: #121212; --text-color: #f0f0f0; --daiyu-color: #00ff88; --bongoro-color: #ff3333; --okina-color: #a020f0; --himejima-color: #ff9900; }
-        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Noto Sans JP', sans-serif; overflow-x: hidden; position: relative; }
+        body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Noto Sans JP', sans-serif; overflow-x: hidden; position: relative; scroll-behavior: smooth; }
         h1, h2, h3 { font-family: 'Dela Gothic One', cursive; letter-spacing: 2px; }
         a { text-decoration: none; }
         
@@ -17,24 +17,30 @@
         .bg-quote { position: absolute; font-family: 'Dela Gothic One', cursive; white-space: nowrap; opacity: 0; text-shadow: 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); animation: flowText linear infinite; }
         @keyframes flowText { 0% { transform: translate(-30vw, -30vh) rotate(20deg); opacity: 0; } 10% { opacity: 0.15; } 90% { opacity: 0.15; } 100% { transform: translate(100vw, 100vh) rotate(20deg); opacity: 0; } }
         
-        .hero { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(0,0,0,0.9) 100%); position: relative; text-align: center; overflow: hidden; background-size: cover; background-position: center; }
+        .hero { height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(0,0,0,0.9) 100%); position: relative; text-align: center; overflow: hidden; background-size: cover; background-position: center; padding: 20px; }
         .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 30%, rgba(0, 255, 136, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 51, 51, 0.15) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(160, 32, 240, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 153, 0, 0.15) 0%, transparent 50%); z-index: 1; pointer-events: none; }
-        .hero-content { position: relative; z-index: 2; }
+        .hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
         
         .title { font-size: 5rem; margin: 0; text-transform: uppercase; color: #fff; -webkit-text-stroke: 2px #000; text-shadow: 0 10px 30px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.8); }
         .subtitle { font-size: 1.5rem; font-weight: 700; margin-top: 10px; color: #fff; text-shadow: 2px 2px 4px #000, 0 0 10px #000; }
         
-        .btn-main { display: inline-block; margin-top: 30px; padding: 15px 40px; font-size: 1.2rem; font-weight: bold; color: #fff; background: #e62117; border-radius: 50px; transition: transform 0.3s, box-shadow 0.3s; }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(230, 33, 23, 0.5); }
-        .sns-container { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .yt-wrapper { margin-top: 25px; text-align: center; }
+        .btn-main { display: inline-block; padding: 18px 45px; font-size: 1.3rem; font-weight: bold; color: #fff; background: #e62117; border-radius: 50px; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 5px 15px rgba(230, 33, 23, 0.4); }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(230, 33, 23, 0.6); }
+        .yt-support-text { display: block; font-size: 0.85rem; color: #ffcc00; margin-top: 6px; font-weight: bold; text-shadow: 1px 1px 3px #000; }
+
+        .sns-container { display: flex; gap: 15px; justify-content: center; margin-top: 15px; }
         .sns-btn { padding: 10px 25px; border-radius: 30px; font-weight: bold; color: #fff; font-size: 0.9rem; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.2); }
         .sns-btn:hover { transform: translateY(-3px); }
         .sns-x { background: #000; }
         .sns-tiktok { background: #010101; border-color: #69C9D0; }
-        /* TikTok準備中（COMING SOON）用のスタイル */
         .sns-tiktok.disabled { background: #222; border-color: #444; color: #777; cursor: not-allowed; pointer-events: none; position: relative; }
         .sns-tiktok.disabled::after { content: ' (COMING SOON)'; font-size: 0.75rem; color: #ffcc00; }
         
+        .quick-nav { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; max-width: 600px; }
+        .quick-nav-btn { background: rgba(30, 30, 30, 0.8); border: 1px solid rgba(255, 255, 255, 0.2); color: #ddd; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; transition: all 0.2s; backdrop-filter: blur(5px); }
+        .quick-nav-btn:hover { background: rgba(255, 51, 51, 0.8); color: #fff; border-color: #ff3333; transform: translateY(-2px); }
+
         section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 5; }
         .section-title { text-align: center; font-size: 3rem; margin-bottom: 40px; border-bottom: 2px solid #333; padding-bottom: 10px; }
         
@@ -87,11 +93,22 @@
         <div class="hero-content">
             <h1 class="title">狂乱ファミリー</h1>
             <p class="subtitle">カオスと爆笑の4人組ゲーム実況！</p>
-            <a href="https://www.youtube.com/channel/UCBVxzJhahQtD7HqZOWhQYNA" target="_blank" class="btn-main">YouTube Channel</a>
+            
+            <div class="yt-wrapper">
+                <a href="https://www.youtube.com/channel/UCBVxzJhahQtD7HqZOWhQYNA" target="_blank" class="btn-main">YouTube Channel</a>
+                <span class="yt-support-text">▼ チャンネル登録＆ご視聴はこちらをクリック！ ▼</span>
+            </div>
+
             <div class="sns-container">
                 <a id="sns-twitter" href="#" target="_blank" class="sns-btn sns-x">𝕏 Twitter</a>
-                <!-- TikTokは現在準備中のため disabled クラスを付与。準備ができたらクラスを外してリンクを設定可能 -->
                 <a id="sns-tiktok" href="#" target="_blank" class="sns-btn sns-tiktok disabled">TikTok</a>
+            </div>
+
+            <div class="quick-nav">
+                <a href="#pickup" class="quick-nav-btn">▶ PICK UP VIDEO</a>
+                <a href="#members" class="quick-nav-btn">▶ MEMBERS</a>
+                <a href="#contents" class="quick-nav-btn">▶ GAMES & SERIES</a>
+                <a href="#info" class="quick-nav-btn">▶ NEXT GOAL</a>
             </div>
         </div>
     </div>
@@ -143,7 +160,7 @@
             <div class="member-card himejima">
                 <div class="tachie-container"><img id="himejima-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" class="tachie-img"></div>
                 <h3 class="member-name" style="color: var(--himejima-color);">ひめじま (Himejima)</h3>
-                <p class="member-role" id="himejima-role">愛されポンコツ後輩</p>
+                <p class="member-role" id="member-role">愛されポンコツ後輩</p>
                 <p class="member-desc" id="himejima-desc">顔のお札がチャーミング。極度の方向音痴やウッカリ操作を発揮するが、グループの大切な癒やし枠として愛されている後輩キャラ。</p>
                 <a href="member_himejima.html" class="member-btn">詳細プロフィール</a>
             </div>
@@ -248,7 +265,6 @@
         window.onload = async function() {
             const fetchOptions = { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } };
             
-            // メンバーAPIからのデータ取得と反映
             if (MICROCMS_MEMBERS_URL) {
                 fetch(MICROCMS_MEMBERS_URL, fetchOptions)
                     .then(r => r.json())
@@ -269,7 +285,6 @@
                     }).catch(e => console.error('メンバー取得エラー:', e));
             }
 
-            // 設定情報の取得（次回予告・SNSリンク含む）
             if (MICROCMS_SETTINGS_URL) {
                 fetch(MICROCMS_SETTINGS_URL, fetchOptions)
                     .then(r => r.json()).then(d => {
@@ -277,13 +292,11 @@
                             document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${d.hero_bg.url})`;
                         }
                         
-                        // Twitterリンクの動的設定
                         if (d.twitter_url) {
                             const twBtn = document.getElementById('sns-twitter');
                             if (twBtn) twBtn.href = d.twitter_url;
                         }
 
-                        // TikTokリンクの動的設定（CMS側に入力があれば自動で有効化する仕様）
                         if (d.tiktok_url) {
                             const ttBtn = document.getElementById('sns-tiktok');
                             if (ttBtn) {
@@ -293,8 +306,8 @@
                         }
                         
                         const nextVideoContainer = document.getElementById('next-video-container');
-                        if (d.next_video_title && d.next_video_thumb && d.next_video_thumb.url) {
-                            // 横の動画カードと完全同サイズ（video-card）になるように構造を統一
+                        // フィールドID 'next_video' (テキスト) と 'next_video_thumb' (画像) を参照するように修正
+                        if (d.next_video && d.next_video_thumb && d.next_video_thumb.url) {
                             nextVideoContainer.innerHTML = `
                                 <div class="video-card">
                                     <div class="video-wrapper">
@@ -303,7 +316,7 @@
                                     </div>
                                     <div class="video-info">
                                         <span style="color: #ffcc00; font-weight:bold; font-size: 0.9rem;">次回投稿予定</span>
-                                        <h4>${d.next_video_title}</h4>
+                                        <h4>${d.next_video}</h4>
                                         <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">お楽しみに！</p>
                                     </div>
                                 </div>
