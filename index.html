@@ -118,28 +118,28 @@
             <div class="member-card daiyu">
                 <div class="tachie-container"><img id="daiyu-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" class="tachie-img"></div>
                 <h3 class="member-name" style="color: var(--daiyu-color);">大夫 (Daiyu)</h3>
-                <p class="member-role">司令塔 兼 魔王</p>
+                <p class="member-role" id="daiyu-role">司令塔 兼 魔王</p>
                 <p class="member-desc" id="daiyu-desc">狂乱ファミリーをまとめる緑のリーダー。おしゃぶりを咥えつつ、メンバーが引き起こすカオスな展開に最大の価値と笑いを見出している。</p>
                 <a href="member_daiyu.html" class="member-btn">詳細プロフィール</a>
             </div>
             <div class="member-card bongoro">
                 <div class="tachie-container"><img id="bongoro-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" class="tachie-img"></div>
                 <h3 class="member-name" style="color: var(--bongoro-color);">ぼんごろ (Bongoro)</h3>
-                <p class="member-role">特攻隊長</p>
+                <p class="member-role" id="bongoro-role">特攻隊長</p>
                 <p class="member-desc" id="bongoro-desc">赤スーツの起爆剤。ショットガンでのフレンドリーファイアや車爆破など、予測不能な破壊的行動で強烈な撮れ高と爆笑を生み出す。</p>
                 <a href="member_bongoro.html" class="member-btn">詳細プロフィール</a>
             </div>
             <div class="member-card okina">
                 <div class="tachie-container"><img id="okina-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" class="tachie-img"></div>
                 <h3 class="member-name" style="color: var(--okina-color);">おきな (Okina)</h3>
-                <p class="member-role">冷静沈着なツッコミ役</p>
+                <p class="member-role" id="okina-role">冷静沈着なツッコミ役</p>
                 <p class="member-desc" id="okina-desc">紫の狐面が特徴。カオス極まる3人の暴走を仙人のような心で静かに見守り、的確なツッコミを入れる真のまとめ役。</p>
                 <a href="member_okina.html" class="member-btn">詳細プロフィール</a>
             </div>
             <div class="member-card himejima">
                 <div class="tachie-container"><img id="himejima-img" src="https://placehold.co/300x400/2a2a2a/555?text=NO+IMAGE" class="tachie-img"></div>
                 <h3 class="member-name" style="color: var(--himejima-color);">ひめじま (Himejima)</h3>
-                <p class="member-role">愛されポンコツ後輩</p>
+                <p class="member-role" id="himejima-role">愛されポンコツ後輩</p>
                 <p class="member-desc" id="himejima-desc">顔のお札がチャーミング。極度の方向音痴やウッカリ操作を発揮するが、グループの大切な癒やし枠として愛されている後輩キャラ。</p>
                 <a href="member_himejima.html" class="member-btn">詳細プロフィール</a>
             </div>
@@ -244,16 +244,24 @@
         window.onload = async function() {
             const fetchOptions = { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } };
             
-            // メンバーAPIからのデータ取得と反映
+            // メンバーAPIからのデータ取得と反映（画像・肩書き・説明文）
             if (MICROCMS_MEMBERS_URL) {
                 fetch(MICROCMS_MEMBERS_URL, fetchOptions)
                     .then(r => r.json())
                     .then(d => {
                         d.contents.forEach(member => {
-                            const imgEl = document.getElementById(member.member_id + '-img');
-                            if (imgEl && member.image) imgEl.src = member.image.url;
-                            const descEl = document.getElementById(member.member_id + '-desc');
-                            if (descEl && member.description) descEl.innerHTML = member.description.replace(/\n/g, '<br>');
+                            if (member.member_id) {
+                                const idLower = String(member.member_id).toLowerCase();
+                                const imgEl = document.getElementById(idLower + '-img');
+                                if (imgEl && member.image) imgEl.src = member.image.url;
+                                
+                                // 肩書き（role）の動的反映を追加
+                                const roleEl = document.getElementById(idLower + '-role');
+                                if (roleEl && member.role) roleEl.innerText = member.role;
+
+                                const descEl = document.getElementById(idLower + '-desc');
+                                if (descEl && member.description) descEl.innerHTML = member.description.replace(/\n/g, '<br>');
+                            }
                         });
                     }).catch(e => console.error('メンバー取得エラー:', e));
             }
@@ -316,7 +324,7 @@
                         const jstOffset = 9 * 60 * 60 * 1000; 
                         const dayNumber = Math.floor((now.getTime() + jstOffset) / (1000 * 60 * 60 * 24));
                         
-                        if (shortVideos.length > 0) {
+                        if, (shortVideos.length > 0) {
                             renderVideo(shortVideos[(dayNumber + 3) % shortVideos.length], 'right-video-container', 'short');
                         }
                         if (regularVideos.length > 0) {
