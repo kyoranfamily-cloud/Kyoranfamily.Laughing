@@ -410,7 +410,7 @@
     <!-- ピックアップビデオ -->
     <section id="pickup">
         <h2 class="section-title">PICK UP VIDEO</h2>
-        <p style="text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9em;">※毎日日替わりでオススメ動画をピックアップ！</p>
+        <p style="text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9em;">※左の動画は30秒ごとに次々と切り替わります！</p>
         <div class="video-grid">
             <div id="left-video-container"></div>
             <div id="right-video-container"></div>
@@ -513,8 +513,6 @@
         const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
         const MICROCMS_SETTINGS_URL = 'https://kyouran-web.microcms.io/api/v1/settings'; 
         const MICROCMS_QUOTES_URL = 'https://kyouran-web.microcms.io/api/v1/quotes';
-        
-        // ↓【新規】「ピックアップ動画」用のURLを追加！
         const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos';
         // ==========================================
 
@@ -525,10 +523,24 @@
         }
 
         // --- サイトに動画を描画するシステム ---
-        function renderVideo(vid, containerId) {
-            if (!vid) return; // データがない場合は何もしない
+        function renderVideo(vid, containerId, type) {
+            if (!vid) return; 
             
-            const iframeSrc = `https://www.youtube.com/embed/${vid.id}?autoplay=1&mute=1&loop=1&playlist=${vid.id}&controls=0&disablekb=1&fs=0&rel=0`;
+            let iframeSrc = '';
+            let infoText = '';
+
+            if (type === 'regular') {
+                // 通常動画：適当な開始位置（例として60秒〜180秒の間）からスタート
+                const startSec = Math.floor(Math.random() * 120) + 60; 
+                // ループ指定はせず、30秒後にJS側で強制的に切り替える
+                iframeSrc = `https://www.youtube.com/embed/${vid.id}?autoplay=1&mute=1&start=${startSec}&controls=0&disablekb=1&fs=0&rel=0`;
+                infoText = '※約30秒ごとに別の動画へ自動切り替え中';
+            } else {
+                // ショート動画：最初からループ再生
+                iframeSrc = `https://www.youtube.com/embed/${vid.id}?autoplay=1&mute=1&loop=1&playlist=${vid.id}&controls=0&disablekb=1&fs=0&rel=0`;
+                infoText = '※冒頭部分をプレビュー中';
+            }
+            
             const videoUrl = `https://youtu.be/${vid.id}`;
             
             document.getElementById(containerId).innerHTML = `
@@ -539,7 +551,7 @@
                     <div class="video-info">
                         <span style="color: ${vid.color}; font-weight:bold; font-size: 0.8rem;">${vid.category}</span>
                         <h4>${vid.title}</h4>
-                        <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">※冒頭部分をプレビュー中</p>
+                        <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">${infoText}</p>
                         <a href="${videoUrl}" target="_blank" style="display: inline-block; margin-top: 10px; color: #fff; background: #e62117; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">▶ 続きをYouTubeで見る</a>
                     </div>
                 </div>
@@ -570,11 +582,10 @@
         }
 
         window.onload = async function() {
-            // 1. 各種データの取得設定
             const fetchOptions = { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } };
 
-            // 2. サイト設定（テキスト・画像）の反映
-            if (!MICROCMS_SETTINGS_URL.includes('ここに')) {
+            // 1. サイト設定の反映
+            if (MICROCMS_SETTINGS_URL) {
                 fetch(MICROCMS_SETTINGS_URL, fetchOptions)
                     .then(r => r.json()).then(d => {
                         if (d.next_video) document.getElementById('next-video-text').innerHTML = `<strong>次回投稿予定:</strong> ${d.next_video}`;
@@ -586,16 +597,16 @@
                     }).catch(e => console.error('設定の取得エラー:', e));
             }
 
-            // 3. 名言の反映
-            if (!MICROCMS_QUOTES_URL.includes('ここに')) {
+            // 2. 名言の反映
+            if (MICROCMS_QUOTES_URL) {
                 fetch(MICROCMS_QUOTES_URL, fetchOptions)
                     .then(r => r.json()).then(d => {
                         if (d.contents) createBackgroundQuotes(d.contents);
                     }).catch(e => console.error('名言の取得エラー:', e));
             }
 
-            // 4. 【NEW】ピックアップ動画の取得と反映
-            if (!MICROCMS_VIDEOS_URL.includes('ここに')) {
+            // 3. ピックアップ動画の取得と反映
+            if (MICROCMS_VIDEOS_URL) {
                 fetch(MICROCMS_VIDEOS_URL, fetchOptions)
                     .then(r => r.json())
                     .then(data => {
@@ -603,7 +614,7 @@
                         const regularVideos = [];
                         const shortVideos = [];
 
-                        // 🎨 セレクトボックスの選択肢と、実際の色（CSS）を紐付ける辞書
+                        // セレクトボックスの選択肢と、実際の色（CSS）を紐付ける辞書
                         const videoColorMap = {
                             '大夫（緑）': 'var(--daiyu-color)',
                             'ぼんごろ（赤）': 'var(--bongoro-color)',
@@ -614,24 +625,20 @@
                             'ホラー（赤）': '#ff4444'
                         };
 
-                        // 取得した動画を「通常」と「ショート」に仕分けする
                         allVideos.forEach(v => {
-                            const videoId = extractYouTubeId(v.url); // URLからIDを自動抽出
-                            if (!videoId) return; // URLが正しくない場合はスキップ
+                            const videoId = extractYouTubeId(v.url); 
+                            if (!videoId) return;
 
-                            // セレクトボックスから選ばれた色の名前を取得
                             const selectedColorName = Array.isArray(v.color) ? v.color[0] : v.color;
-                            // 辞書と照らし合わせて色を決定（未選択や見つからない場合はデフォルトの赤）
                             const finalColor = videoColorMap[selectedColorName] || '#ff4444';
 
                             const videoData = {
                                 id: videoId,
                                 title: v.title,
                                 category: v.category,
-                                color: finalColor // 変換した色をセット！
+                                color: finalColor
                             };
 
-                            // セレクトボックスの選択肢（配列で返ってくる場合の対応）
                             const type = Array.isArray(v.type) ? v.type[0] : v.type;
                             if (type === 'ショート') {
                                 shortVideos.push(videoData);
@@ -640,18 +647,29 @@
                             }
                         });
 
-                        // 毎日ランダム（日替わり）で動画を選択するロジック
                         const now = new Date();
                         const jstOffset = 9 * 60 * 60 * 1000; 
                         const dayNumber = Math.floor((now.getTime() + jstOffset) / (1000 * 60 * 60 * 24));
 
-                        // 登録された動画が1件以上あれば表示
-                        if (regularVideos.length > 0) {
-                            renderVideo(regularVideos[dayNumber % regularVideos.length], 'left-video-container');
-                        }
+                        // 🔴 ショート動画（右側）は日替わりで1日固定
                         if (shortVideos.length > 0) {
-                            renderVideo(shortVideos[(dayNumber + 3) % shortVideos.length], 'right-video-container');
+                            renderVideo(shortVideos[(dayNumber + 3) % shortVideos.length], 'right-video-container', 'short');
                         }
+
+                        // 🟢 通常動画（左側）はリストの中から30秒ごとに次々と切り替え
+                        if (regularVideos.length > 0) {
+                            let currentRegularIndex = dayNumber % regularVideos.length;
+                            
+                            // 初回の表示
+                            renderVideo(regularVideos[currentRegularIndex], 'left-video-container', 'regular');
+                            
+                            // 30秒（30000ミリ秒）ごとに次の動画へ切り替えるタイマー
+                            setInterval(() => {
+                                currentRegularIndex = (currentRegularIndex + 1) % regularVideos.length;
+                                renderVideo(regularVideos[currentRegularIndex], 'left-video-container', 'regular');
+                            }, 30000);
+                        }
+
                     }).catch(e => console.error('動画の取得エラー:', e));
             }
         }
