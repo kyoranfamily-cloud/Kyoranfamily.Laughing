@@ -36,7 +36,6 @@
         .profile-box { background: rgba(30, 30, 30, 0.9); padding: 30px; border-radius: 15px; border-left: 5px solid var(--theme-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
         .profile-box h2 { margin-top: 0; color: var(--theme-color); border-bottom: 1px solid #444; padding-bottom: 10px; }
         .profile-text { line-height: 1.8; font-size: 1.05rem; }
-        /* リッチエディタ用のスタイル調整 */
         .profile-text p { margin-top: 0; margin-bottom: 15px; }
         .profile-text p:last-child { margin-bottom: 0; }
         
@@ -99,7 +98,7 @@
     <script>
         const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
         const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos';
-        const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members?filters=member_id[equals]bongoro';
+        const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members';
 
         function extractYouTubeId(url) {
             const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtube\.com\/shorts\/)([^"&?\/\s]{11})/);
@@ -127,21 +126,21 @@
         }
 
         window.onload = function() {
-            // メンバーデータの取得と反映
+            // メンバーデータ全件取得から 'bongoro' を抽出
             fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
                 .then(r => r.json())
                 .then(data => {
-                    if (data.contents && data.contents.length > 0) {
-                        const member = data.contents[0];
-                        if (member.image) document.getElementById('tachie-img').src = member.image.url;
-                        if (member.description) document.getElementById('madness-quote').innerHTML = member.description.replace(/\n/g, '<br>');
-                        
-                        // 今回新しく追加した3つの受け口！
-                        if (member.role) document.getElementById('member-role').innerText = member.role;
-                        if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
-                        if (member.about) document.getElementById('about-text').innerHTML = member.about;
+                    if (data.contents) {
+                        const member = data.contents.find(m => m.member_id && m.member_id.toLowerCase() === 'bongoro');
+                        if (member) {
+                            if (member.image) document.getElementById('tachie-img').src = member.image.url;
+                            if (member.role) document.getElementById('member-role').innerText = member.role;
+                            if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
+                            if (member.description) document.getElementById('madness-quote').innerHTML = member.description.replace(/\n/g, '<br>');
+                            if (member.about) document.getElementById('about-text').innerHTML = member.about;
+                        }
                     }
-                }).catch(e => console.error(e));
+                }).catch(e => console.error('メンバー情報取得エラー:', e));
 
             // 動画データの取得
             fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
