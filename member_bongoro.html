@@ -15,12 +15,12 @@
         .back-btn { color: #fff; font-weight: bold; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
         .back-btn:hover { background: #333; }
         
-        .member-hero { padding: 40px 20px 0; text-align: center; background: radial-gradient(circle at top, rgba(255, 51, 51, 0.15) 0%, transparent 70%); }
+        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, rgba(255, 51, 51, 0.15) 0%, transparent 70%); }
         .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px rgba(255,51,51,0.4); }
-        .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 30px; font-weight: bold; }
+        .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 20px; font-weight: bold; }
         
-        /* 画像を大きく表示するために高さを確保し、横並びのサイズを拡大 */
-        .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 520px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
+        /* 画像エリア */
+        .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 480px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
         .avatar-img { height: 95%; max-width: 26%; object-fit: contain; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.9)); opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; transition: transform 0.3s; }
         .avatar-img:hover { transform: translateY(-10px); }
         
@@ -31,19 +31,25 @@
         
         @keyframes fadeInUp { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 
-        .content-container { max-width: 900px; margin: 40px auto; padding: 20px; display: grid; gap: 30px; }
+        .content-container { max-width: 900px; margin: 0 auto 40px; padding: 20px; display: grid; gap: 30px; }
+        
+        /* テキスト枠を上にあげ、画像と重ねて前面に表示する調整 */
+        .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 20; margin-top: -60px; }
+        @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; margin-top: -20px; } .avatar-cluster { height: 350px; } }
+        
+        /* 背景透過率を下げて（不透明度を高くして）画像とかぶっても見やすく調整 */
+        .motto-box { background: rgba(26, 15, 15, 0.95); border: 2px solid rgba(255,51,51,0.5); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .madness-box { background: rgba(20, 20, 20, 0.95); border: 2px solid rgba(255,255,255,0.3); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        
+        .quote-title { font-family: 'Dela Gothic One', cursive; font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
+        .quote-text { font-size: 1.4rem; font-weight: bold; line-height: 1.5; }
+
         .profile-box { background: rgba(30, 30, 30, 0.9); padding: 30px; border-radius: 15px; border-left: 5px solid var(--theme-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
         .profile-box h2 { margin-top: 0; color: var(--theme-color); border-bottom: 1px solid #444; padding-bottom: 10px; }
         .profile-text { line-height: 1.8; font-size: 1.05rem; }
         .profile-text p { margin-top: 0; margin-bottom: 15px; }
         .profile-text p:last-child { margin-bottom: 0; }
-        
-        .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; } .avatar-cluster { height: 350px; } }
-        .motto-box { background: linear-gradient(135deg, rgba(255,51,51,0.1), transparent); border: 1px solid rgba(255,51,51,0.3); border-radius: 10px; padding: 20px; text-align: center; }
-        .madness-box { background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 20px; text-align: center; }
-        .quote-title { font-family: 'Dela Gothic One', cursive; font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
-        .quote-text { font-size: 1.4rem; font-weight: bold; line-height: 1.5; }
+
         .video-card { background: rgba(20, 20, 20, 0.9); border-radius: 15px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #333; }
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; pointer-events: none; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
