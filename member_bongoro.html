@@ -126,12 +126,11 @@
         }
 
         window.onload = function() {
-            // メンバーデータ全件取得から 'bongoro' を抽出
             fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
                 .then(r => r.json())
                 .then(data => {
                     if (data.contents) {
-                        const member = data.contents.find(m => m.member_id && m.member_id.toLowerCase() === 'bongoro');
+                        const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === 'bongoro');
                         if (member) {
                             if (member.image) document.getElementById('tachie-img').src = member.image.url;
                             if (member.role) document.getElementById('member-role').innerText = member.role;
@@ -142,7 +141,6 @@
                     }
                 }).catch(e => console.error('メンバー情報取得エラー:', e));
 
-            // 動画データの取得
             fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
                 .then(r => r.json())
                 .then(data => {
