@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ぼんごろ (Bongoro) - 狂乱ファミリー</title>
+    <title>ぼんごろう (Bongoro) - 狂乱ファミリー</title>
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg-color: #121212; --text-color: #f0f0f0; --theme-color: #ff3333; }
@@ -19,12 +19,11 @@
         .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px rgba(255,51,51,0.4); }
         .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 30px; font-weight: bold; }
         
-        /* 4つの画像を横一列に綺麗に並べるためのフレックスボックス設定 */
-        .avatar-cluster { position: relative; width: 100%; max-width: 1000px; height: 420px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 15px; padding-bottom: 10px; }
-        .avatar-img { height: 85%; max-width: 22%; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8)); opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; transition: transform 0.3s; }
+        /* 画像を大きく表示するために高さを確保し、横並びのサイズを拡大 */
+        .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 520px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
+        .avatar-img { height: 95%; max-width: 26%; object-fit: contain; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.9)); opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; transition: transform 0.3s; }
         .avatar-img:hover { transform: translateY(-10px); }
         
-        /* 画像ごとの出現遅延アニメーション */
         .avatar-other { animation-delay: 0.2s; }
         .avatar-mh { animation-delay: 0.4s; }
         .avatar-gta { animation-delay: 0.6s; }
@@ -40,7 +39,7 @@
         .profile-text p:last-child { margin-bottom: 0; }
         
         .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; } .avatar-cluster { height: 300px; } }
+        @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; } .avatar-cluster { height: 350px; } }
         .motto-box { background: linear-gradient(135deg, rgba(255,51,51,0.1), transparent); border: 1px solid rgba(255,51,51,0.3); border-radius: 10px; padding: 20px; text-align: center; }
         .madness-box { background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 20px; text-align: center; }
         .quote-title { font-family: 'Dela Gothic One', cursive; font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
@@ -60,10 +59,9 @@
         <div style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">BONGORO PROFILE</div>
     </header>
     <div class="member-hero">
-        <h1 class="member-name">ぼんごろ</h1>
+        <h1 class="member-name">ぼんごろう</h1>
         <div id="member-role" class="member-role">特攻隊長</div>
         <div class="avatar-cluster">
-            <!-- 4枚の画像が横並びで重ならずに表示されます -->
             <img id="image-other" src="https://placehold.co/300x500/222/555?text=Other" alt="その他" class="avatar-img avatar-other">
             <img id="image-mh" src="https://placehold.co/400x600/333/777?text=Monster+Hunter" alt="モンハン姿" class="avatar-img avatar-mh">
             <img id="image-gta" src="https://placehold.co/350x550/444/888?text=GTA5+(Shotgun)" alt="GTA姿" class="avatar-img avatar-gta">
@@ -84,13 +82,13 @@
         <div class="profile-box">
             <h2>ABOUT BONGORO</h2>
             <div id="about-text" class="profile-text">
-                <p><strong>赤スーツ</strong>に身を包むカオスメーカー。愛用のショットガンと予測不能な特攻で、GTAでは必ずと言っていいほど大夫の車を爆破する。</p>
-                <p>フレンドリーファイアなどのコミカルなミスを意図的に引き起こし、強烈な撮れ高を生み出す起爆剤。彼の起こす理不尽なトラブルこそが、狂乱ファミリーの爆笑の源である。</p>
+                <p><strong>赤スーツ</strong>に身を包むカオスメーカー。愛用のショットガンと予測不能な特攻で、GTAでは必ずと言っていいほど大夫の車を爆破する[cite: 1]。</p>
+                <p>フレンドリーファイアなどのコミカルなミスを意図的に引き起こし、強烈な撮れ高を生み出す起爆剤。彼の起こす理不尽なトラブルこそが、狂乱ファミリーの爆笑の源である[cite: 1]。</p>
             </div>
         </div>
         <div class="profile-box">
             <h2>RECOMMEND VIDEO</h2>
-            <p style="color: #aaa; font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">ぼんごろの特攻が光るおすすめ動画をピックアップ！</p>
+            <p style="color: #aaa; font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">ぼんごろうの特攻が光るおすすめ動画をピックアップ！</p>
             <div id="member-video-container"></div>
         </div>
     </div>
@@ -155,7 +153,7 @@
                         const videoId = extractYouTubeId(v.url); 
                         if (!videoId) return;
                         const selectedColorName = Array.isArray(v.color) ? v.color[0] : v.color;
-                        if (selectedColorName === 'ぼんごろ（赤）' || v.title.includes('ぼんごろ')) {
+                        if (selectedColorName === 'ぼんごろ（赤）' || v.title.includes('ぼんごろ') || v.title.includes('ぼんごろう')) {
                             memberVideos.push({ id: videoId, title: v.title, category: v.category, color: 'var(--theme-color)' });
                         }
                     });
