@@ -59,7 +59,7 @@
     <div class="bg-giant-text">司令塔 兼 魔王</div>
     <header>
         <a href="index.html" class="back-btn">← トップページ</a>
-        <div style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">DAIYU PROFILE</div>
+        <div id="header-profile-title" style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">DAIYU PROFILE</div>
     </header>
     <div class="member-hero">
         <h1 class="member-name">大夫</h1>
@@ -134,6 +134,7 @@
                     if (data.contents) {
                         const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === 'daiyu');
                         if (member) {
+                            // 既存の動的処理をそのまま維持
                             if (member.image) document.getElementById('tachie-img').src = member.image.url;
                             if (member.image_gta) document.getElementById('image-gta').src = member.image_gta.url;
                             if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
@@ -143,6 +144,10 @@
                             if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
                             if (member.madness) document.getElementById('madness-quote').innerHTML = member.madness.replace(/\n/g, '<br>');
                             if (member.about) document.getElementById('about-text').innerHTML = member.about;
+
+                            // 右上の『〇〇 PROFILE』表示のみ動的書き換え（設定されている名前またはmember_idを利用）
+                            const nameText = member.name || member.member_id || 'DAIYU';
+                            document.getElementById('header-profile-title').innerText = `${String(nameText).toUpperCase()} PROFILE`;
                         }
                     }
                 }).catch(e => console.error('メンバー情報取得エラー:', e));
