@@ -15,8 +15,8 @@
         .back-btn { color: #fff; font-weight: bold; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
         .back-btn:hover { background: #333; }
         
-        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, rgba(0, 255, 136, 0.15) 0%, transparent 70%); }
-        .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px rgba(0,255,136,0.4); }
+        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, var(--theme-color) 0%, transparent 70%); }
+        .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px var(--theme-color); }
         .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 20px; font-weight: bold; }
         
         .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 520px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
@@ -35,7 +35,7 @@
         .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 20; margin-top: -60px; }
         @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; margin-top: -20px; } .avatar-cluster { height: 350px; } }
         
-        .motto-box { background: rgba(15, 26, 20, 0.95); border: 2px solid rgba(0,255,136,0.5); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .motto-box { background: rgba(15, 26, 20, 0.95); border: 2px solid var(--theme-color); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         .madness-box { background: rgba(26, 15, 15, 0.95); border: 2px solid rgba(255,68,68,0.5); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         
         .quote-title { font-family: 'Dela Gothic One', cursive; font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
@@ -99,7 +99,6 @@
         const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos';
         const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members';
 
-        // URLパラメータ(?id=xxx) または デフォルト('daiyu') から対象メンバーを取得
         const urlParams = new URLSearchParams(window.location.search);
         const MEMBER_KEY = (urlParams.get('id') || 'bongoro').toLowerCase();
 
@@ -135,14 +134,18 @@
                     if (data.contents) {
                         const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === MEMBER_KEY);
                         if (member) {
-                            // ページタイトルの動的変更
+                            // テーマカラー（色）の動的セット（未設定の場合は初期値 #00ff88）
+                            const themeColor = member.theme_color || member.color || '#00ff88';
+                            document.documentElement.style.setProperty('--theme-color', themeColor);
+
+                            // ページタイトルとテキストの動的変更
                             const displayName = member.name || member.member_id || MEMBER_KEY;
                             document.title = `${displayName} - 狂乱ファミリー`;
 
-                            // ヘッダー・背景テキスト・見出しの更新
                             document.getElementById('header-profile-title').innerText = `${String(displayName).toUpperCase()} PROFILE`;
                             document.getElementById('about-title').innerText = `ABOUT ${String(displayName).toUpperCase()}`;
                             document.getElementById('recommend-desc').innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
+                            
                             if (member.role) {
                                 document.getElementById('member-role').innerText = member.role;
                                 document.getElementById('bg-giant-text').innerText = member.role;
@@ -173,7 +176,6 @@
                         if (!videoId) return;
                         const selectedColorName = Array.isArray(v.color) ? v.color[0] : v.color;
                         
-                        // タイトルまたはタグ指定カラーに現在のメンバーキーが含まれるか判定
                         if ((selectedColorName && selectedColorName.toLowerCase().includes(MEMBER_KEY)) || 
                             (v.title && v.title.toLowerCase().includes(MEMBER_KEY))) {
                             memberVideos.push({ id: videoId, title: v.title, category: v.category, color: 'var(--theme-color)' });
