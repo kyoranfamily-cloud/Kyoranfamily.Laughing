@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大夫 (Dayu) - 狂乱ファミリー</title>
+    <title>メンバープロフィール - 狂乱ファミリー</title>
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg-color: #121212; --text-color: #f0f0f0; --theme-color: #00ff88; }
@@ -15,8 +15,8 @@
         .back-btn { color: #fff; font-weight: bold; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
         .back-btn:hover { background: #333; }
         
-        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, rgba(0, 255, 136, 0.15) 0%, transparent 70%); }
-        .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px rgba(0,255,136,0.4); }
+        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, var(--theme-color) 0%, transparent 70%); }
+        .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px var(--theme-color); }
         .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 20px; font-weight: bold; }
         
         .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 520px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
@@ -35,7 +35,7 @@
         .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; z-index: 20; margin-top: -60px; }
         @media (max-width: 768px) { .quote-grid { grid-template-columns: 1fr; margin-top: -20px; } .avatar-cluster { height: 350px; } }
         
-        .motto-box { background: rgba(15, 26, 20, 0.95); border: 2px solid rgba(0,255,136,0.5); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .motto-box { background: rgba(15, 26, 20, 0.95); border: 2px solid var(--theme-color); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         .madness-box { background: rgba(26, 15, 15, 0.95); border: 2px solid rgba(255,68,68,0.5); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         
         .quote-title { font-family: 'Dela Gothic One', cursive; font-size: 1.2rem; margin-bottom: 15px; color: #fff; }
@@ -56,42 +56,39 @@
     </style>
 </head>
 <body>
-    <div class="bg-giant-text">司令塔 兼 魔王</div>
+    <div id="bg-giant-text" class="bg-giant-text">PROFILE</div>
     <header>
         <a href="index.html" class="back-btn">← トップページ</a>
-        <div id="header-profile-title" style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">DAIYU PROFILE</div>
+        <div id="header-profile-title" style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">PROFILE</div>
     </header>
     <div class="member-hero">
-        <h1 class="member-name">大夫</h1>
-        <div id="member-role" class="member-role">司令塔 兼 魔王</div>
+        <h1 id="member-name" class="member-name">-</h1>
+        <div id="member-role" class="member-role">-</div>
         <div class="avatar-cluster">
             <img id="image-other" src="https://placehold.co/300x500/222/555?text=Other" alt="その他" class="avatar-img avatar-other">
             <img id="image-mh" src="https://placehold.co/400x600/333/777?text=Monster+Hunter" alt="モンハン姿" class="avatar-img avatar-mh">
             <img id="image-gta" src="https://placehold.co/350x550/444/888?text=GTA5" alt="GTA姿" class="avatar-img avatar-gta">
-            <img id="tachie-img" src="https://placehold.co/500x700/111/00ff88?text=Tachie+(Pacifier)" alt="立ち絵" class="avatar-img avatar-tachie">
+            <img id="tachie-img" src="https://placehold.co/500x700/111/00ff88?text=Tachie" alt="立ち絵" class="avatar-img avatar-tachie">
         </div>
     </div>
     <div class="content-container">
         <div class="quote-grid">
             <div class="motto-box">
                 <div class="quote-title">📝 座右の銘</div>
-                <div id="motto-quote" class="quote-text" style="color: var(--theme-color);">「カオスの中にこそ、<br>真のエンタメがある」</div>
+                <div id="motto-quote" class="quote-text" style="color: var(--theme-color);">-</div>
             </div>
             <div class="madness-box">
                 <div class="quote-title">⚠️ 狂気の一言</div>
-                <div id="madness-quote" class="quote-text" style="color: #ff4444;">「ぼんごろの車爆破？<br>最高のスパイスだよね。もっとやれ」</div>
+                <div id="madness-quote" class="quote-text" style="color: #ff4444;">-</div>
             </div>
         </div>
         <div class="profile-box">
-            <h2>ABOUT DAIYU</h2>
-            <div id="about-text" class="profile-text">
-                <p>狂乱ファミリーを牽引する緑のリーダー。トレードマークの<strong>おしゃぶり</strong>を咥えながら、グループの企画やスケジュールの進行を担う司令塔的存在。</p>
-                <p>基本的には真面目にゲームを進めようとするものの、メンバーが引き起こすカオスで理不尽なトラブルに対しては怒るどころか大爆笑。その予測不能な展開に最大の「価値と笑い」を見出し、動画の最高の撮れ高へと昇華させている。</p>
-            </div>
+            <h2 id="about-title">ABOUT MEMBER</h2>
+            <div id="about-text" class="profile-text"></div>
         </div>
         <div class="profile-box">
             <h2>RECOMMEND VIDEO</h2>
-            <p style="color: #aaa; font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">大夫が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！</p>
+            <p id="recommend-desc" style="color: #aaa; font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">大活躍のおすすめ動画をピックアップ！</p>
             <div id="member-video-container"></div>
         </div>
     </div>
@@ -101,6 +98,9 @@
         const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
         const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos';
         const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const MEMBER_KEY = (urlParams.get('id') || 'daiyu').toLowerCase();
 
         function extractYouTubeId(url) {
             const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtube\.com\/shorts\/)([^"&?\/\s]{11})/);
@@ -132,22 +132,36 @@
                 .then(r => r.json())
                 .then(data => {
                     if (data.contents) {
-                        const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === 'daiyu');
+                        const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === MEMBER_KEY);
                         if (member) {
-                            // 既存の動的処理をそのまま維持
+                            // テーマカラー（色）の動的セット（未設定の場合は初期値 #00ff88）
+                            const themeColor = member.theme_color || member.color || '#00ff88';
+                            document.documentElement.style.setProperty('--theme-color', themeColor);
+
+                            // ページタイトルとテキストの動的変更
+                            const displayName = member.name || member.member_id || MEMBER_KEY;
+                            document.title = `${displayName} - 狂乱ファミリー`;
+
+                            document.getElementById('header-profile-title').innerText = `${String(displayName).toUpperCase()} PROFILE`;
+                            document.getElementById('about-title').innerText = `ABOUT ${String(displayName).toUpperCase()}`;
+                            document.getElementById('recommend-desc').innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
+                            
+                            if (member.role) {
+                                document.getElementById('member-role').innerText = member.role;
+                                document.getElementById('bg-giant-text').innerText = member.role;
+                            }
+                            if (member.name) document.getElementById('member-name').innerText = member.name;
+
+                            // 画像取得
                             if (member.image) document.getElementById('tachie-img').src = member.image.url;
                             if (member.image_gta) document.getElementById('image-gta').src = member.image_gta.url;
                             if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
                             if (member.image_other) document.getElementById('image-other').src = member.image_other.url;
 
-                            if (member.role) document.getElementById('member-role').innerText = member.role;
+                            // 各テキスト枠の更新
                             if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
                             if (member.madness) document.getElementById('madness-quote').innerHTML = member.madness.replace(/\n/g, '<br>');
                             if (member.about) document.getElementById('about-text').innerHTML = member.about;
-
-                            // 右上の『〇〇 PROFILE』表示のみ動的書き換え（設定されている名前またはmember_idを利用）
-                            const nameText = member.name || member.member_id || 'DAIYU';
-                            document.getElementById('header-profile-title').innerText = `${String(nameText).toUpperCase()} PROFILE`;
                         }
                     }
                 }).catch(e => console.error('メンバー情報取得エラー:', e));
@@ -161,7 +175,9 @@
                         const videoId = extractYouTubeId(v.url); 
                         if (!videoId) return;
                         const selectedColorName = Array.isArray(v.color) ? v.color[0] : v.color;
-                        if (selectedColorName === '大夫（緑）' || v.title.includes('大夫')) {
+                        
+                        if ((selectedColorName && selectedColorName.toLowerCase().includes(MEMBER_KEY)) || 
+                            (v.title && v.title.toLowerCase().includes(MEMBER_KEY))) {
                             memberVideos.push({ id: videoId, title: v.title, category: v.category, color: 'var(--theme-color)' });
                         }
                     });
