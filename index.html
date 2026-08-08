@@ -16,7 +16,6 @@
         h1, h2, h3 { font-family: 'Dela Gothic One', cursive; letter-spacing: 2px; }
         a { text-decoration: none; }
         
-        /* 言語切替UI */
         .lang-switch-box { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 5px; background: rgba(0,0,0,0.8); padding: 5px; border-radius: 30px; border: 1px solid #444; backdrop-filter: blur(5px); }
         .lang-btn { background: transparent; border: none; color: #888; font-weight: bold; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.3s; font-size: 0.85rem; }
         .lang-btn.active { background: #e62117; color: #fff; box-shadow: 0 0 10px rgba(230,33,23,0.5); }
@@ -25,7 +24,6 @@
         .bg-quote { position: absolute; font-family: 'Dela Gothic One', cursive; white-space: nowrap; opacity: 0; text-shadow: 0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8); animation: flowText linear infinite; }
         @keyframes flowText { 0% { transform: translate(-30vw, -30vh) rotate(20deg); opacity: 0; } 10% { opacity: 0.15; } 90% { opacity: 0.15; } 100% { transform: translate(100vw, 100vh) rotate(20deg); opacity: 0; } }
         
-        /* 🔥 ヒーローエリア：背景の中央完全固定 */
         .hero { 
             height: 80vh; 
             min-height: 500px;
@@ -56,7 +54,6 @@
             align-items: center; 
         }
         
-        /* 🔥 アプローチ1：文字数可変対応メインタイトル */
         .title { 
             margin: 0 auto; 
             text-transform: uppercase; 
@@ -284,7 +281,6 @@
     <script>
         let currentLang = 'ja';
         
-        // 🔥 アプローチ1：文字数に応じてタイトルのフォントサイズを動的調整
         function autoAdjustTitleSize(text) {
             const titleEl = document.getElementById('hero-title');
             if (!titleEl) return;
@@ -474,29 +470,39 @@
                         if (d.goal_number) document.getElementById('goal-number').innerText = d.goal_number;
                         updateElementWithDataJa('goal-message', d.goal_message, true);
                         
+                        // 🔥 【フィールドID修正済み】次回投稿予定動画のレンダリング
                         const nextVideoContainer = document.getElementById('next-video-container');
-                        if (d.next_video_title && d.next_video_thumb && d.next_video_thumb.url) {
-                            nextVideoContainer.innerHTML = `
-                                <div class="video-card" style="height: 100%;">
-                                    <div class="video-wrapper">
-                                        <img src="${d.next_video_thumb.url}" alt="次回サムネイル">
-                                        <div style="position:absolute; top:10px; left:10px; background:#ffcc00; color:#000; font-weight:bold; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-family: 'Dela Gothic One', cursive;">NEXT UPDATE</div>
+                        if (nextVideoContainer) {
+                            // microCMSの実際のフィールドID: next_video, next_video_text, next_video_thumb
+                            if (d.next_video || (d.next_video_thumb && d.next_video_thumb.url)) {
+                                const titleText = d.next_video || '次回投稿予定';
+                                const descText = d.next_video_text || 'お楽しみに！';
+                                const imgHtml = (d.next_video_thumb && d.next_video_thumb.url) 
+                                    ? `<img src="${d.next_video_thumb.url}" alt="次回サムネイル">` 
+                                    : `<div style="display:flex; justify-content:center; align-items:center; height:100%; background:#222; color:#555; font-weight:bold;">NO IMAGE</div>`;
+
+                                nextVideoContainer.innerHTML = `
+                                    <div class="video-card" style="height: 100%;">
+                                        <div class="video-wrapper">
+                                            ${imgHtml}
+                                            <div style="position:absolute; top:10px; left:10px; background:#ffcc00; color:#000; font-weight:bold; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-family: 'Dela Gothic One', cursive;">NEXT UPDATE</div>
+                                        </div>
+                                        <div class="video-info">
+                                            <span style="color: #ffcc00; font-weight:bold; font-size: 0.9rem;">次回投稿予定</span>
+                                            <h4>${titleText}</h4>
+                                            <div style="font-size: 0.85rem; color: #aaa; margin-top: 8px; line-height: 1.4;">${descText}</div>
+                                        </div>
                                     </div>
-                                    <div class="video-info">
-                                        <span style="color: #ffcc00; font-weight:bold; font-size: 0.9rem;">次回投稿予定</span>
-                                        <h4>${d.next_video_title}</h4>
-                                        <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">お楽しみに！</p>
+                                `;
+                            } else {
+                                nextVideoContainer.innerHTML = `
+                                    <div class="video-card coming-soon-card" style="height: 100%;">
+                                        <h3 style="color: #ffcc00; font-size: 2rem; margin: 0 0 15px 0;">COMING SOON</h3>
+                                        <p style="color: #ccc; font-size: 1rem; line-height: 1.6; font-weight:bold;">現在、次回のカオスを<br>絶賛仕込み中！</p>
+                                        <p style="color: #888; font-size: 0.85rem; margin-top: 20px;">左の動画でお茶を濁してください🍵</p>
                                     </div>
-                                </div>
-                            `;
-                        } else {
-                            nextVideoContainer.innerHTML = `
-                                <div class="video-card coming-soon-card" style="height: 100%;">
-                                    <h3 style="color: #ffcc00; font-size: 2rem; margin: 0 0 15px 0;">COMING SOON</h3>
-                                    <p style="color: #ccc; font-size: 1rem; line-height: 1.6; font-weight:bold;">現在、次回のカオスを<br>絶賛仕込み中！</p>
-                                    <p style="color: #888; font-size: 0.85rem; margin-top: 20px;">左の動画でお茶を濁してください🍵</p>
-                                </div>
-                            `;
+                                `;
+                            }
                         }
                     }).catch(e => console.error('設定の取得エラー:', e));
             }
