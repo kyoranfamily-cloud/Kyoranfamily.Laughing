@@ -15,9 +15,18 @@
         .back-btn { color: #fff; font-weight: bold; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
         .back-btn:hover { background: #333; }
         
-        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, var(--theme-color) 0%, transparent 70%); }
-        .member-name { font-size: 4rem; margin: 0; color: var(--theme-color); text-shadow: 0 0 15px var(--theme-color); }
-        .member-role { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 20px; font-weight: bold; }
+        /* 背景グラデーションを少し濃いめにして視認性を向上 */
+        .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, rgba(0,0,0,0.4) 0%, transparent 80%), radial-gradient(circle at top, var(--theme-color) 0%, transparent 70%); }
+        
+        /* 名前が見えにくくならないよう黒の強力な縁取りとシャドウを追加 */
+        .member-name { 
+            font-size: 4rem; 
+            margin: 0; 
+            color: var(--theme-color); 
+            text-shadow: 0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            -webkit-text-stroke: 1.5px #000;
+        }
+        .member-role { font-size: 1.2rem; color: #eee; margin-top: 5px; margin-bottom: 20px; font-weight: bold; text-shadow: 0 2px 4px #000; }
         
         .avatar-cluster { position: relative; width: 100%; max-width: 1200px; height: 520px; margin: 0 auto; display: flex; justify-content: center; align-items: flex-end; gap: 20px; padding-bottom: 10px; }
         .avatar-img { height: 95%; max-width: 26%; object-fit: contain; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.9)); opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; transition: transform 0.3s; }
@@ -102,6 +111,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const MEMBER_KEY = (urlParams.get('id') || 'daiyu').toLowerCase();
 
+        let currentMemberData = null; // メンバー情報を保持
+
         function extractYouTubeId(url) {
             const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtube\.com\/shorts\/)([^"&?\/\s]{11})/);
             return match ? match[1] : null;
@@ -128,56 +139,70 @@
         }
 
         window.onload = function() {
-            fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.contents) {
-                        const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === MEMBER_KEY);
-                        if (member) {
-                            // テーマカラー（色）の動的セット（未設定の場合は初期値 #00ff88）
-                            const themeColor = member.theme_color || member.color || '#00ff88';
-                            document.documentElement.style.setProperty('--theme-color', themeColor);
+            // メンバー情報と動画情報を並行取得
+            Promise.all([
+                fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } }).then(r => r.json()),
+                fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } }).then(r => r.json())
+            ]).then(([membersData, videosData]) => {
+                
+                // 1. メンバー情報のセット
+                if (membersData.contents) {
+                    currentMemberData = membersData.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === MEMBER_KEY);
+                    if (currentMemberData) {
+                        const themeColor = currentMemberData.theme_color || currentMemberData.color || '#00ff88';
+                        document.documentElement.style.setProperty('--theme-color', themeColor);
 
-                            // ページタイトルとテキストの動的変更
-                            const displayName = member.name || member.member_id || MEMBER_KEY;
-                            document.title = `${displayName} - 狂乱ファミリー`;
+                        const displayName = currentMemberData.name || currentMemberData.member_id || MEMBER_KEY;
+                        document.title = `${displayName} - 狂乱ファミリー`;
 
-                            document.getElementById('header-profile-title').innerText = `${String(displayName).toUpperCase()} PROFILE`;
-                            document.getElementById('about-title').innerText = `ABOUT ${String(displayName).toUpperCase()}`;
-                            document.getElementById('recommend-desc').innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
-                            
-                            if (member.role) {
-                                document.getElementById('member-role').innerText = member.role;
-                                document.getElementById('bg-giant-text').innerText = member.role;
-                            }
-                            if (member.name) document.getElementById('member-name').innerText = member.name;
-
-                            // 画像取得
-                            if (member.image) document.getElementById('tachie-img').src = member.image.url;
-                            if (member.image_gta) document.getElementById('image-gta').src = member.image_gta.url;
-                            if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
-                            if (member.image_other) document.getElementById('image-other').src = member.image_other.url;
-
-                            // 各テキスト枠の更新
-                            if (member.motto) document.getElementById('motto-quote').innerHTML = member.motto.replace(/\n/g, '<br>');
-                            if (member.madness) document.getElementById('madness-quote').innerHTML = member.madness.replace(/\n/g, '<br>');
-                            if (member.about) document.getElementById('about-text').innerHTML = member.about;
+                        document.getElementById('header-profile-title').innerText = `${String(displayName).toUpperCase()} PROFILE`;
+                        document.getElementById('about-title').innerText = `ABOUT ${String(displayName).toUpperCase()}`;
+                        document.getElementById('recommend-desc').innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
+                        
+                        if (currentMemberData.role) {
+                            document.getElementById('member-role').innerText = currentMemberData.role;
+                            document.getElementById('bg-giant-text').innerText = currentMemberData.role;
                         }
-                    }
-                }).catch(e => console.error('メンバー情報取得エラー:', e));
+                        if (currentMemberData.name) document.getElementById('member-name').innerText = currentMemberData.name;
 
-            fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
-                .then(r => r.json())
-                .then(data => {
-                    const allVideos = data.contents;
+                        if (currentMemberData.image) document.getElementById('tachie-img').src = currentMemberData.image.url;
+                        if (currentMemberData.image_gta) document.getElementById('image-gta').src = currentMemberData.image_gta.url;
+                        if (currentMemberData.image_mh) document.getElementById('image-mh').src = currentMemberData.image_mh.url;
+                        if (currentMemberData.image_other) document.getElementById('image-other').src = currentMemberData.image_other.url;
+
+                        if (currentMemberData.motto) document.getElementById('motto-quote').innerHTML = currentMemberData.motto.replace(/\n/g, '<br>');
+                        if (currentMemberData.madness) document.getElementById('madness-quote').innerHTML = member.madness ? currentMemberData.madness.replace(/\n/g, '<br>') : '';
+                        if (currentMemberData.about) document.getElementById('about-text').innerHTML = currentMemberData.about;
+                    }
+                }
+
+                // 2. 動画取得判定（曖昧検索ロジック強化）
+                if (videosData.contents) {
+                    const allVideos = videosData.contents;
                     const memberVideos = [];
+
+                    // 検索に使用するキーワードのリスト（ID、漢字名、ひらがな表記など）
+                    const searchKeywords = [MEMBER_KEY];
+                    if (currentMemberData) {
+                        if (currentMemberData.name) searchKeywords.push(currentMemberData.name);
+                        // 「ぼんごろ」と「ぼんごろう」の表記揺れ吸収
+                        if (currentMemberData.name.includes('ぼんごろ')) searchKeywords.push('ぼんごろ', 'ぼんごろう');
+                    }
+
                     allVideos.forEach(v => {
                         const videoId = extractYouTubeId(v.url); 
                         if (!videoId) return;
-                        const selectedColorName = Array.isArray(v.color) ? v.color[0] : v.color;
-                        
-                        if ((selectedColorName && selectedColorName.toLowerCase().includes(MEMBER_KEY)) || 
-                            (v.title && v.title.toLowerCase().includes(MEMBER_KEY))) {
+
+                        const selectedColorName = Array.isArray(v.color) ? v.color[0] : (v.color || '');
+                        const videoTitle = v.title || '';
+
+                        // カラー名またはタイトルに、検索キーワードのいずれかが含まれていればマッチ
+                        const isMatch = searchKeywords.some(kw => 
+                            selectedColorName.toLowerCase().includes(kw.toLowerCase()) || 
+                            videoTitle.toLowerCase().includes(kw.toLowerCase())
+                        );
+
+                        if (isMatch) {
                             memberVideos.push({ id: videoId, title: v.title, category: v.category, color: 'var(--theme-color)' });
                         }
                     });
@@ -195,7 +220,8 @@
                     } else {
                         document.getElementById('member-video-container').innerHTML = '<p style="color:#aaa;">おすすめ動画のデータがまだありません。</p>';
                     }
-                }).catch(e => console.error(e));
+                }
+            }).catch(e => console.error('データ取得エラー:', e));
         };
     </script>
 </body>
