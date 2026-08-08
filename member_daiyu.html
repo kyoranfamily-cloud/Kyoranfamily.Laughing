@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大夫 (Daiyu) - 狂乱ファミリー</title>
+    <title>大夫 (Dayu) - 狂乱ファミリー</title>
     <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg-color: #121212; --text-color: #f0f0f0; --theme-color: #00ff88; }
@@ -59,7 +59,7 @@
     <div class="bg-giant-text">司令塔 兼 魔王</div>
     <header>
         <a href="index.html" class="back-btn">← トップページ</a>
-        <div id="header-profile-title" style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">DAIYU PROFILE</div>
+        <div style="font-family: 'Dela Gothic One', cursive; color: var(--theme-color);">DAIYU PROFILE</div>
     </header>
     <div class="member-hero">
         <h1 class="member-name">大夫</h1>
@@ -134,10 +134,6 @@
                     if (data.contents) {
                         const member = data.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === 'daiyu');
                         if (member) {
-                            // ヘッダーの PROFILE 表記をCMSの名前（またはmember_id）から動的に書き換え
-                            const displayName = member.name || member.member_id || 'DAIYU';
-                            document.getElementById('header-profile-title').innerText = `${displayName.toUpperCase()} PROFILE`;
-
                             if (member.image) document.getElementById('tachie-img').src = member.image.url;
                             if (member.image_gta) document.getElementById('image-gta').src = member.image_gta.url;
                             if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
