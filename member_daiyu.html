@@ -15,10 +15,8 @@
         .back-btn { color: #fff; font-weight: bold; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; transition: background 0.2s; }
         .back-btn:hover { background: #333; }
         
-        /* 背景グラデーションを少し濃いめにして視認性を向上 */
         .member-hero { padding: 40px 20px 20px; text-align: center; background: radial-gradient(circle at top, rgba(0,0,0,0.4) 0%, transparent 80%), radial-gradient(circle at top, var(--theme-color) 0%, transparent 70%); }
         
-        /* 名前が見えにくくならないよう黒の強力な縁取りとシャドウを追加 */
         .member-name { 
             font-size: 4rem; 
             margin: 0; 
@@ -105,17 +103,28 @@
 
     <script>
         const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
-        const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos';
+        // 全件（最大100件）取得できるように limit=100 を指定
+        const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos?limit=100';
         const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members';
 
         const urlParams = new URLSearchParams(window.location.search);
         const MEMBER_KEY = (urlParams.get('id') || 'daiyu').toLowerCase();
 
-        let currentMemberData = null; // メンバー情報を保持
+        let currentMemberData = null;
 
         function extractYouTubeId(url) {
+            if (!url) return null;
             const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtube\.com\/shorts\/)([^"&?\/\s]{11})/);
             return match ? match[1] : null;
+        }
+
+        // セレクトフィールド等の様々なデータ型を安全に文字列に変換する関数
+        function parseSelectFieldValue(val) {
+            if (!val) return '';
+            if (typeof val === 'string') return val;
+            if (Array.isArray(val)) return val.map(item => parseSelectFieldValue(item)).join(' ');
+            if (typeof val === 'object') return val.value || val.title || val.name || val.label || JSON.stringify(val);
+            return String(val);
         }
 
         function renderMemberVideo(vid, containerId) {
@@ -129,8 +138,8 @@
                         <iframe src="${iframeSrc}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     </div>
                     <div class="video-info">
-                        <span style="color: ${vid.color}; font-weight:bold; font-size: 0.9rem;">${vid.category}</span>
-                        <h4>${vid.title}</h4>
+                        <span style="color: ${vid.color}; font-weight:bold; font-size: 0.9rem;">${vid.category || ''}</span>
+                        <h4>${vid.title || ''}</h4>
                         <p style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">※約30秒ごとに別のおすすめシーンへ自動切り替え中</p>
                         <a href="${videoUrl}" target="_blank" style="display: inline-block; margin-top: 10px; color: #fff; background: #e62117; padding: 8px 15px; border-radius: 5px; font-size: 0.9rem; font-weight: bold;">▶ 音声ありで本編を見る</a>
                     </div>
@@ -139,15 +148,20 @@
         }
 
         window.onload = function() {
-            // メンバー情報と動画情報を並行取得
             Promise.all([
                 fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } }).then(r => r.json()),
                 fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } }).then(r => r.json())
             ]).then(([membersData, videosData]) => {
                 
-                // 1. メンバー情報のセット
-                if (membersData.contents) {
-                    currentMemberData = membersData.contents.find(m => m.member_id && String(m.member_id).toLowerCase() === MEMBER_KEY);
+                // 1. メンバー情報の抽出
+                if (membersData && membersData.contents) {
+                    currentMemberData = membersData.contents.find(m => {
+                        const mid = String(m.member_id || m.id || '').toLowerCase();
+                        const mname = String(m.name || '').toLowerCase();
+                        const key = MEMBER_KEY.toLowerCase();
+                        return mid === key || mname === key || mid.includes(key) || key.includes(mid);
+                    }) || membersData.contents[0];
+
                     if (currentMemberData) {
                         const themeColor = currentMemberData.theme_color || currentMemberData.color || '#00ff88';
                         document.documentElement.style.setProperty('--theme-color', themeColor);
@@ -156,54 +170,75 @@
                         document.title = `${displayName} - 狂乱ファミリー`;
 
                         document.getElementById('header-profile-title').innerText = `${String(displayName).toUpperCase()} PROFILE`;
-                        document.getElementById('about-title').innerText = `ABOUT ${String(displayName).toUpperCase()}`;
+                        document.getElementById('about-title').innerText = `ABOUT ${displayName}`;
                         document.getElementById('recommend-desc').innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
                         
                         if (currentMemberData.role) {
                             document.getElementById('member-role').innerText = currentMemberData.role;
                             document.getElementById('bg-giant-text').innerText = currentMemberData.role;
                         }
-                        if (currentMemberData.name) document.getElementById('member-name').innerText = currentMemberData.name;
+                        if (currentMemberData.name) {
+                            document.getElementById('member-name').innerText = currentMemberData.name;
+                        }
 
                         if (currentMemberData.image) document.getElementById('tachie-img').src = currentMemberData.image.url;
                         if (currentMemberData.image_gta) document.getElementById('image-gta').src = currentMemberData.image_gta.url;
                         if (currentMemberData.image_mh) document.getElementById('image-mh').src = currentMemberData.image_mh.url;
                         if (currentMemberData.image_other) document.getElementById('image-other').src = currentMemberData.image_other.url;
 
-                        if (currentMemberData.motto) document.getElementById('motto-quote').innerHTML = currentMemberData.motto.replace(/\n/g, '<br>');
-                        if (currentMemberData.madness) document.getElementById('madness-quote').innerHTML = member.madness ? currentMemberData.madness.replace(/\n/g, '<br>') : '';
-                        if (currentMemberData.about) document.getElementById('about-text').innerHTML = currentMemberData.about;
+                        if (currentMemberData.motto) {
+                            document.getElementById('motto-quote').innerHTML = currentMemberData.motto.replace(/\n/g, '<br>');
+                        }
+                        if (currentMemberData.madness) {
+                            document.getElementById('madness-quote').innerHTML = currentMemberData.madness.replace(/\n/g, '<br>');
+                        }
+                        if (currentMemberData.about) {
+                            document.getElementById('about-text').innerHTML = currentMemberData.about;
+                        }
                     }
                 }
 
-                // 2. 動画取得判定（曖昧検索ロジック強化）
-                if (videosData.contents) {
+                // 2. 動画の検索と抽出（全項目を安全に読み込み）
+                if (videosData && videosData.contents) {
                     const allVideos = videosData.contents;
                     const memberVideos = [];
 
-                    // 検索に使用するキーワードのリスト（ID、漢字名、ひらがな表記など）
+                    // 検索キーワード群を作成
                     const searchKeywords = [MEMBER_KEY];
                     if (currentMemberData) {
                         if (currentMemberData.name) searchKeywords.push(currentMemberData.name);
-                        // 「ぼんごろ」と「ぼんごろう」の表記揺れ吸収
-                        if (currentMemberData.name.includes('ぼんごろ')) searchKeywords.push('ぼんごろ', 'ぼんごろう');
+                        if (currentMemberData.member_id) searchKeywords.push(currentMemberData.member_id);
+                    }
+
+                    const joinedKeys = searchKeywords.join(' ').toLowerCase();
+                    if (joinedKeys.includes('大夫') || joinedKeys.includes('だゆう') || joinedKeys.includes('daiyu') || joinedKeys.includes('dayu')) {
+                        searchKeywords.push('大夫', 'だゆう', 'daiyu', 'dayu', '緑');
+                    }
+                    if (joinedKeys.includes('ぼんごろ') || joinedKeys.includes('bongoro')) {
+                        searchKeywords.push('ぼんごろ', 'ぼんごろう', 'bongoro', '赤');
                     }
 
                     allVideos.forEach(v => {
                         const videoId = extractYouTubeId(v.url); 
                         if (!videoId) return;
 
-                        const selectedColorName = Array.isArray(v.color) ? v.color[0] : (v.color || '');
-                        const videoTitle = v.title || '';
+                        // セレクトフィールドを含めた各項目の文字化
+                        const colorStr = parseSelectFieldValue(v.color);
+                        const typeStr = parseSelectFieldValue(v.type);
+                        const titleStr = v.title || '';
+                        const categoryStr = v.category || '';
 
-                        // カラー名またはタイトルに、検索キーワードのいずれかが含まれていればマッチ
-                        const isMatch = searchKeywords.some(kw => 
-                            selectedColorName.toLowerCase().includes(kw.toLowerCase()) || 
-                            videoTitle.toLowerCase().includes(kw.toLowerCase())
-                        );
+                        // 動画内の全フィールド（title, color, category, type）からキーワード検索
+                        const targetText = `${titleStr} ${colorStr} ${categoryStr} ${typeStr}`.toLowerCase();
+                        const isMatch = searchKeywords.some(kw => targetText.includes(kw.toLowerCase()));
 
                         if (isMatch) {
-                            memberVideos.push({ id: videoId, title: v.title, category: v.category, color: 'var(--theme-color)' });
+                            memberVideos.push({
+                                id: videoId,
+                                title: titleStr,
+                                category: categoryStr,
+                                color: 'var(--theme-color)'
+                            });
                         }
                     });
 
@@ -221,7 +256,9 @@
                         document.getElementById('member-video-container').innerHTML = '<p style="color:#aaa;">おすすめ動画のデータがまだありません。</p>';
                     }
                 }
-            }).catch(e => console.error('データ取得エラー:', e));
+            }).catch(e => {
+                console.error('データ取得エラー:', e);
+            });
         };
     </script>
 </body>
