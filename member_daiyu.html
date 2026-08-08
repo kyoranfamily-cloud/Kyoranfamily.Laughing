@@ -103,7 +103,6 @@
 
     <script>
         const MICROCMS_API_KEY = 'z72ZTLbVPzP6AoXqrOp1aUVZDmcTDhBerXcH';
-        const MICROCMS_VIDEOS_URL = 'https://kyouran-web.microcms.io/api/v1/videos?limit=100';
         const MICROCMS_MEMBERS_URL = 'https://kyouran-web.microcms.io/api/v1/members';
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -136,9 +135,6 @@
         }
 
         window.onload = function() {
-            // -------------------------------------------------------------
-            // 1. メンバー情報の取得・表示（独立処理）
-            // -------------------------------------------------------------
             fetch(MICROCMS_MEMBERS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
                 .then(r => r.json())
                 .then(data => {
@@ -152,31 +148,23 @@
                     }) || data.contents[0];
 
                     if (member) {
+                        // 1. プロフィール画面の構築
                         const themeColor = member.theme_color || member.color || '#00ff88';
                         document.documentElement.style.setProperty('--theme-color', themeColor);
 
                         const displayName = member.name || member.member_id || MEMBER_KEY;
                         document.title = `${displayName} - 狂乱ファミリー`;
 
-                        const elHeader = document.getElementById('header-profile-title');
-                        if (elHeader) elHeader.innerText = `${String(displayName).toUpperCase()} PROFILE`;
-
-                        const elAboutTitle = document.getElementById('about-title');
-                        if (elAboutTitle) elAboutTitle.innerText = `ABOUT ${displayName}`;
-
-                        const elRecDesc = document.getElementById('recommend-desc');
-                        if (elRecDesc) elRecDesc.innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
+                        if (document.getElementById('header-profile-title')) document.getElementById('header-profile-title').innerText = `${String(displayName).toUpperCase()} PROFILE`;
+                        if (document.getElementById('about-title')) document.getElementById('about-title').innerText = `ABOUT ${displayName}`;
+                        if (document.getElementById('recommend-desc')) document.getElementById('recommend-desc').innerText = `${displayName}が大活躍（あるいは大惨事）のおすすめ動画をピックアップ！`;
                         
                         if (member.role) {
-                            const elRole = document.getElementById('member-role');
-                            const elBg = document.getElementById('bg-giant-text');
-                            if (elRole) elRole.innerText = member.role;
-                            if (elBg) elBg.innerText = member.role;
+                            if (document.getElementById('member-role')) document.getElementById('member-role').innerText = member.role;
+                            if (document.getElementById('bg-giant-text')) document.getElementById('bg-giant-text').innerText = member.role;
                         }
-
-                        if (member.name) {
-                            const elName = document.getElementById('member-name');
-                            if (elName) elName.innerText = member.name;
+                        if (member.name && document.getElementById('member-name')) {
+                            document.getElementById('member-name').innerText = member.name;
                         }
 
                         if (member.image) document.getElementById('tachie-img').src = member.image.url;
@@ -184,83 +172,55 @@
                         if (member.image_mh) document.getElementById('image-mh').src = member.image_mh.url;
                         if (member.image_other) document.getElementById('image-other').src = member.image_other.url;
 
-                        if (member.motto) {
-                            document.getElementById('motto-quote').innerHTML = String(member.motto).replace(/\n/g, '<br>');
-                        }
-                        if (member.madness) {
-                            document.getElementById('madness-quote').innerHTML = String(member.madness).replace(/\n/g, '<br>');
-                        }
-                        if (member.about) {
-                            document.getElementById('about-text').innerHTML = String(member.about);
-                        }
-                    }
-                })
-                .catch(e => console.error('メンバー情報取得エラー:', e));
+                        if (member.motto) document.getElementById('motto-quote').innerHTML = String(member.motto).replace(/\n/g, '<br>');
+                        if (member.madness) document.getElementById('madness-quote').innerHTML = String(member.madness).replace(/\n/g, '<br>');
+                        if (member.about) document.getElementById('about-text').innerHTML = String(member.about);
 
-            // -------------------------------------------------------------
-            // 2. 動画（RECOMMEND VIDEO）の取得・表示（独立処理）
-            // -------------------------------------------------------------
-            fetch(MICROCMS_VIDEOS_URL, { headers: { 'X-MICROCMS-API-KEY': MICROCMS_API_KEY } })
-                .then(r => r.json())
-                .then(data => {
-                    const container = document.getElementById('member-video-container');
-                    if (!container) return;
-
-                    if (!data || !data.contents || data.contents.length === 0) {
-                        container.innerHTML = '<p style="color:#aaa;">おすすめ動画のデータがまだありません。</p>';
-                        return;
-                    }
-
-                    const allVideos = data.contents;
-                    const memberVideos = [];
-
-                    // 判定用キーワード
-                    const key = MEMBER_KEY.toLowerCase();
-                    const searchKeywords = [key];
-
-                    if (key.includes('daiyu') || key.includes('dayu') || key.includes('大夫') || key.includes('だゆう')) {
-                        searchKeywords.push('大夫', 'だゆう', 'daiyu', 'dayu', '緑');
-                    } else if (key.includes('bongoro') || key.includes('ぼんごろ')) {
-                        searchKeywords.push('ぼんごろ', 'ぼんごろう', 'bongoro', '赤');
-                    }
-
-                    allVideos.forEach(v => {
-                        if (!v || !v.url) return;
-                        const videoId = extractYouTubeId(v.url); 
-                        if (!videoId) return;
-
-                        // データ構造に関わらず文字列化して確実に安全検索
-                        const videoJsonString = JSON.stringify(v).toLowerCase();
-                        const isMatch = searchKeywords.some(kw => videoJsonString.includes(kw.toLowerCase()));
-
-                        if (isMatch) {
-                            memberVideos.push({
-                                id: videoId,
-                                title: v.title || '',
-                                category: v.category || '',
-                                color: 'var(--theme-color)'
-                            });
-                        }
-                    });
-
-                    if (memberVideos.length > 0) {
-                        const now = new Date();
-                        const dayNumber = Math.floor((now.getTime() + 9 * 60 * 60 * 1000) / (1000 * 60 * 60 * 24));
-                        let currentIndex = dayNumber % memberVideos.length;
-                        renderMemberVideo(memberVideos[currentIndex], 'member-video-container');
+                        // 2. テキストエリアからのURL抽出と表示
+                        const container = document.getElementById('member-video-container');
                         
-                        setInterval(() => {
-                            currentIndex = (currentIndex + 1) % memberVideos.length;
-                            renderMemberVideo(memberVideos[currentIndex], 'member-video-container');
-                        }, 30000);
-                    } else {
-                        container.innerHTML = '<p style="color:#aaa;">おすすめ動画のデータがまだありません。</p>';
+                        // テキストエリアの文字列を取得し、改行やカンマで分割して配列化
+                        const urlsText = member.recommend_video_urls || '';
+                        const urlList = urlsText.split(/[\r\n,]+/).map(u => u.trim()).filter(u => u !== '');
+
+                        if (urlList.length > 0) {
+                            const memberVideos = [];
+                            
+                            urlList.forEach(url => {
+                                const videoId = extractYouTubeId(url);
+                                if (videoId) {
+                                    memberVideos.push({
+                                        id: videoId,
+                                        title: `${displayName} 厳選ピックアップ`, // タイトルを自動補完
+                                        category: 'RECOMMEND', // カテゴリを自動補完
+                                        color: 'var(--theme-color)' 
+                                    });
+                                }
+                            });
+
+                            if (memberVideos.length > 0) {
+                                const now = new Date();
+                                const dayNumber = Math.floor((now.getTime() + 9 * 60 * 60 * 1000) / (1000 * 60 * 60 * 24));
+                                let currentIndex = dayNumber % memberVideos.length;
+                                
+                                renderMemberVideo(memberVideos[currentIndex], 'member-video-container');
+                                
+                                setInterval(() => {
+                                    currentIndex = (currentIndex + 1) % memberVideos.length;
+                                    renderMemberVideo(memberVideos[currentIndex], 'member-video-container');
+                                }, 30000);
+                            } else {
+                                if (container) container.innerHTML = '<p style="color:#aaa;">有効なYouTube URLが設定されていません。</p>';
+                            }
+                        } else {
+                            if (container) container.innerHTML = '<p style="color:#aaa;">おすすめ動画がまだ設定されていません。</p>';
+                        }
                     }
                 })
                 .catch(e => {
-                    console.error('動画データ取得エラー:', e);
+                    console.error('メンバー情報エラー:', e);
                     const container = document.getElementById('member-video-container');
-                    if (container) container.innerHTML = '<p style="color:#aaa;">動画データの取得に失敗しました。</p>';
+                    if (container) container.innerHTML = '<p style="color:#aaa;">データの取得に失敗しました。</p>';
                 });
         };
     </script>
